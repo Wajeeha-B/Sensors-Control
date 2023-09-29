@@ -1,0 +1,174 @@
+<?xml version="1.0"?>
+<robot name="basic-rocke" xmlns:xacro="http://ros.org/wiki/xacro">
+
+ <!--###################### MATERIAL ######################-->
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+    <material name="gray">
+        <color rgba="0.0 1 0.0 1"/>
+    </material>
+
+ <!--###################### XACRO PROPERTIES ######################-->
+    <xacro:property name="chasis_width" value="0.4"/>
+    <xacro:property name="chasis_length" value="0.65"/>
+    <xacro:property name="chasis_height" value="0.15"/>
+    <xacro:property name="chasis_mass" value="0.15"/>
+
+    <xacro:property name="leg_radius" value="0.03"/>
+    <xacro:property name="leg_length" value="0.25"/>
+    <xacro:property name="leg_rotation" value="0.4"/>
+    <xacro:property name="leg_mass" value="0.4"/>
+
+    <xacro:property name="wheel_radius" value="0.1"/>
+    <xacro:property name="wheel_mass" value="0.4"/>
+
+    <xacro:property name="front" value="1"/>
+    <xacro:property name="back" value="-1"/>
+    <xacro:property name="right" value="1"/>
+    <xacro:property name="left" value="-1"/>
+
+ <!--###################### XACRO MACRO ######################-->
+
+    <xacro:macro name="leg" params="prefix_l fb lr"> 
+        <link name="${prefix_l}_leg">
+            <visual>
+                <geometry>
+                    <cylinder radius="${leg_radius}" length="${leg_length}"/>
+                </geometry>
+                <origin xyz="0.0 0.0 0.0" rpy="${fb*0.79} 0.0 0.0"/>
+                <material name="white"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder radius="${leg_radius}" length="${leg_length}"/>
+                </geometry>
+                <origin xyz="0.0 0.0 0.0" rpy="${fb*0.79} 0.0 0.0"/>
+                <material name="white"/>
+            </collision>
+            <inertial>
+                <mass value="${leg_mass}"/>
+                <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+            </inertial>
+        </link>
+
+        <joint name="base_to_${prefix_l}_leg" type="fixed">
+            <parent link="base_link"/>
+            <child link="${prefix_l}_leg"/>
+            <origin xyz="${lr*chasis_width/2} ${fb*chasis_width/2} ${-leg_length/2} " rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="wheel" params="prefix_w fb_w"> 
+        <link name="${prefix_w}_wheel">
+            <visual>
+                <geometry>
+                    <cylinder radius="${wheel_radius}" length="0.2"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 1.57 0"/>  
+                <material name="white"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <cylinder radius="0.1" length="0.2"/>
+                </geometry>
+                <origin xyz="0 0 0" rpy="0 1.57 0"/>  
+                <material name="black"/>
+            </collision>
+            <inertial>
+                <mass value="${wheel_mass}"/>
+                <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+            </inertial>
+        </link>
+
+        <joint name="${prefix_w}_wheel_joint" type="continuous">
+            <origin xyz="0 ${fb_w*leg_length/2} ${-leg_length/2}" rpy="0 0 0"/>
+            <parent link="${prefix_w}_leg"/>
+            <child link="${prefix_w}_wheel"/>
+        </joint>
+
+        <!-- This provides details about the wheel material. Necessary as its interacting physically with other items -->
+        <gazebo reference="${prefix_w}_wheel">
+            <mu1 value="200.0"/>
+            <mu2 value="100.0"/>
+            <kp value="10000000.0" />
+            <kd value="1.0" />
+            <material>Gazebo/Grey</material>
+        </gazebo>
+
+        <transmission name="${prefix_w}_wheel_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <actuator name="${prefix_w}_wheel_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <joint name="${prefix_w}_wheel_joint">
+                <hardwareInterface>EffortJointInterface</hardwareInterface>
+            </joint>
+        </transmission>
+
+    </xacro:macro>
+
+ <!--###################### LINKS ######################-->
+    <link name="dummy">
+    </link>
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="${chasis_width} ${chasis_length} ${chasis_height}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${chasis_width} ${chasis_length} ${chasis_height}"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="${chasis_mass}"/>
+            <inertia ixx="0.4" ixy="0.0" ixz="0.0" iyy="0.4" iyz="0.0" izz="0.2"/>
+        </inertial>
+    </link>
+
+    <joint name="dummy_joint" type="fixed">
+        <parent link="dummy"/>
+        <child link="base_link"/>
+    </joint>
+
+    <xacro:leg prefix_l="fr" fb="${front}" lr="${right}"/>
+    <xacro:leg prefix_l="fl" fb="${front}" lr="${left}"/>
+    <xacro:leg prefix_l="br" fb="${back}" lr="${right}"/>
+    <xacro:leg prefix_l="bl" fb="${back}" lr="${left}"/>
+
+    <xacro:wheel prefix_w="fr" fb_w="${front}"/>
+    <xacro:wheel prefix_w="fl" fb_w="${front}"/>
+    <xacro:wheel prefix_w="br" fb_w="${back}"/>
+    <xacro:wheel prefix_w="bl" fb_w="${back}"/>
+
+ <!--###################### GAZEBO ######################-->
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/</robotNamespace>
+        </plugin> 
+
+<!-- Copied and pasted from Gazebo plugin tutorial-->
+        <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+            <updateRate>100.0</updateRate>
+            <robotNamespace>/</robotNamespace>
+            <leftFrontJoint>fl_wheel_joint</leftFrontJoint>
+            <rightFrontJoint>fr_wheel_joint</rightFrontJoint>
+            <leftRearJoint>bl_wheel_joint</leftRearJoint>
+            <rightRearJoint>br_wheel_joint</rightRearJoint>
+            <wheelSeparation>0.4</wheelSeparation>
+            <wheelDiameter>0.215</wheelDiameter>
+            <robotBaseFrame>base_link</robotBaseFrame>
+            <torque>20</torque>
+            <topicName>cmd_vel</topicName>
+            <broadcastTF>false</broadcastTF>
+        </plugin>
+    </gazebo>
+    
+</robot>
