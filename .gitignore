@@ -1,5 +1,0 @@
-.log
-build/*
-!build/build.xml
-**/.build
-**/build
