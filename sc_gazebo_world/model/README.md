@@ -52,7 +52,7 @@ Note: Save file to a location, the 'ost.yaml' file contains the useful data
 
 #### `OPTION 2:` turtleBot3:
     export TURTLEBOT3_MODEL=waffle_pi
-    roslaunch sc_gazebo_world turtlebot3_marker_V2.launch
+    roslaunch sc_gazebo_world turtlebot3_marker_V3_V2\ .launch
     
     export TURTLEBOT3_MODEL=waffle_pi
     roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launch
