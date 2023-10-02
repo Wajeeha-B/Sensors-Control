@@ -12,7 +12,8 @@ e.g. sc_gazebo_world
     catkin_make
 
 ## Launching the Simulation
-    export TURTLEBOT3_MODEL=waffle_pi
+    export TURTLEBOT3_MODEL1=waffle_pi
+    export TURTLEBOT3_MODEL2=waffle_pi
     roslaunch sc_gazebo_world turtlebot3_marker_V3_V2\ .launch
     
     export TURTLEBOT3_MODEL=waffle_pi
@@ -20,3 +21,6 @@ e.g. sc_gazebo_world
     
 ## Spawning AR Tag
     rosrun gazebo_ros spawn_model -file /home/wajeeha/catkin_ws/src/Sensors-Control/sc_gazebo_world/model Apriltag36_11_00000/model.sdf -sdf -model Apriltag36_11_00000 -x -0.1 -y 0 -z 0.1
+
+## Video
+https://studentutsedu-my.sharepoint.com/:v:/g/personal/wajeeha_batool_student_uts_edu_au/EXfFVYyE4yVFrK9yGzpa2qUBO8vwA6Brl32uWrpU21oHtQ?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZyIsInJlZmVycmFsQXBwUGxhdGZvcm0iOiJXZWIiLCJyZWZlcnJhbE1vZGUiOiJ2aWV3In19&email=Wajeeha.Batool%40student.uts.edu.au&e=7LjdB2
