@@ -86,90 +86,90 @@ unsigned int LaserProcessing::countSegments()
 }
 
 //finds the midpoint between two of the closest cones detected, one from the left and one from the right
-geometry_msgs::Point LaserProcessing::detectRoadCentre(){
-    geometry_msgs::Point pt;
-    //Uses the countSegments function to populate the cones_ vector pair.
-    unsigned int count = countSegments();
-    //It is necessary to have at least 2 cones detected to find the midpoint so it will return an invalid goal if there is less than 2 cones
-    if (cones_.size() < 2){
-      ROS_INFO_STREAM("Not enough cones!");
-      pt.z = 999;
-      return pt;
-    }
+// geometry_msgs::Point LaserProcessing::detectRoadCentre(){
+//     geometry_msgs::Point pt;
+//     //Uses the countSegments function to populate the cones_ vector pair.
+//     unsigned int count = countSegments();
+//     //It is necessary to have at least 2 cones detected to find the midpoint so it will return an invalid goal if there is less than 2 cones
+//     if (cones_.size() < 2){
+//       ROS_INFO_STREAM("Not enough cones!");
+//       pt.z = 999;
+//       return pt;
+//     }
 
-    //shortRange records the closest cone detected and starts at the maximum value of the laser sensor
-    float shortRange = laserScan_.range_max;
-    //stores the index of the 2 closest cones
-    unsigned int a = 0, b = 0;
+//     //shortRange records the closest cone detected and starts at the maximum value of the laser sensor
+//     float shortRange = laserScan_.range_max;
+//     //stores the index of the 2 closest cones
+//     unsigned int a = 0, b = 0;
     
-    //finds the closest cone to the right of the car
-    for(int i = 0; i < cones_.size(); i++)
-    {
-        //measures the range from the laser sensor and the location of the cone
-        float r = sqrt(pow(cones_.at(i).first,2)+pow(cones_.at(i).second,2));
-        //if the range is shorter than the value of shortRange, a new shortest range is set to shortRange and the index of the cone is saved
-        //it also ensures that this cone is to the right of the laser sensor/car by having a negative y value
-        if(r < shortRange && cones_.at(i).second < 0){
-          shortRange = r;
-          a = i;
-        }
-    }
-    //the shortRange variable is reset to the max range to find the next closest cone
-    shortRange = laserScan_.range_max;
+//     //finds the closest cone to the right of the car
+//     for(int i = 0; i < cones_.size(); i++)
+//     {
+//         //measures the range from the laser sensor and the location of the cone
+//         float r = sqrt(pow(cones_.at(i).first,2)+pow(cones_.at(i).second,2));
+//         //if the range is shorter than the value of shortRange, a new shortest range is set to shortRange and the index of the cone is saved
+//         //it also ensures that this cone is to the right of the laser sensor/car by having a negative y value
+//         if(r < shortRange && cones_.at(i).second < 0){
+//           shortRange = r;
+//           a = i;
+//         }
+//     }
+//     //the shortRange variable is reset to the max range to find the next closest cone
+//     shortRange = laserScan_.range_max;
 
-    //finds the closest cone to the left of the car
-    for(int j = 0; j < cones_.size(); j++)
-    {
-        //if the index j matches the index of the first closest cone found, continue to the next iteration
-        if(j == a) continue;
-        //measures the range from the laser sensor and the location of the cone
-        float r = sqrt(pow(cones_.at(j).first,2)+pow(cones_.at(j).second,2));
-        //if the range is shorter than the value of shortRange, a new shortest range is set to shortRange and the index of the cone is saved
-        //it also ensures that this cone is to the left of the laser sensor/car by having a positive y value
-        if(r < shortRange && cones_.at(j).second > 0){
-          shortRange = r;
-          b = j;
-        }
-    }
-    //the location of the 2 closest cones are stored for use later
-    cone1_.x = cones_.at(a).first;
-    cone1_.y = cones_.at(a).second;
-    cone2_.x = cones_.at(b).first;
-    cone2_.y = cones_.at(b).second;
+//     //finds the closest cone to the left of the car
+//     for(int j = 0; j < cones_.size(); j++)
+//     {
+//         //if the index j matches the index of the first closest cone found, continue to the next iteration
+//         if(j == a) continue;
+//         //measures the range from the laser sensor and the location of the cone
+//         float r = sqrt(pow(cones_.at(j).first,2)+pow(cones_.at(j).second,2));
+//         //if the range is shorter than the value of shortRange, a new shortest range is set to shortRange and the index of the cone is saved
+//         //it also ensures that this cone is to the left of the laser sensor/car by having a positive y value
+//         if(r < shortRange && cones_.at(j).second > 0){
+//           shortRange = r;
+//           b = j;
+//         }
+//     }
+//     //the location of the 2 closest cones are stored for use later
+//     cone1_.x = cones_.at(a).first;
+//     cone1_.y = cones_.at(a).second;
+//     cone2_.x = cones_.at(b).first;
+//     cone2_.y = cones_.at(b).second;
 
-    //the x and y values of the 2 closest cone's is averaged using the index in the vector to find the midpoint which is the goal
-    pt.x = (cones_.at(a).first+cones_.at(b).first)/2;
-    pt.y = (cones_.at(a).second+cones_.at(b).second)/2;
-    pt.z = 0.0;
-    return pt;
-}
+//     //the x and y values of the 2 closest cone's is averaged using the index in the vector to find the midpoint which is the goal
+//     pt.x = (cones_.at(a).first+cones_.at(b).first)/2;
+//     pt.y = (cones_.at(a).second+cones_.at(b).second)/2;
+//     pt.z = 0.0;
+//     return pt;
+// }
 
-//Used to check if the goal is within the cones, not actively used for navigation or generating goals
-bool LaserProcessing::GoalInCones(geometry_msgs::Point goal){
-    geometry_msgs::Point centre;
-    //finds the midpoint between the 2 cones
-    centre.x = (cone1_.x+cone2_.x)/2;
-    centre.y = (cone1_.y+cone2_.y)/2;
-    //finds the distance between the midpoint and the first cone
-    float radius = sqrt(pow(centre.x-cone1_.x,2)+pow(centre.y-cone1_.y,2));
-    //finds the distance between the midpoint and the goal
-    float centreGoalDiff = sqrt(pow(centre.x-goal.x,2)+pow(centre.y-goal.y,2));
-    //if the distance between the midpoint and the goal is greater than the midpoint and the goal, then it is considered not between the cones
-    if(centreGoalDiff > radius) return false;
-    //otherwise the goal is between the cones
-    return true;
-}
+// //Used to check if the goal is within the cones, not actively used for navigation or generating goals
+// bool LaserProcessing::GoalInCones(geometry_msgs::Point goal){
+//     geometry_msgs::Point centre;
+//     //finds the midpoint between the 2 cones
+//     centre.x = (cone1_.x+cone2_.x)/2;
+//     centre.y = (cone1_.y+cone2_.y)/2;
+//     //finds the distance between the midpoint and the first cone
+//     float radius = sqrt(pow(centre.x-cone1_.x,2)+pow(centre.y-cone1_.y,2));
+//     //finds the distance between the midpoint and the goal
+//     float centreGoalDiff = sqrt(pow(centre.x-goal.x,2)+pow(centre.y-goal.y,2));
+//     //if the distance between the midpoint and the goal is greater than the midpoint and the goal, then it is considered not between the cones
+//     if(centreGoalDiff > radius) return false;
+//     //otherwise the goal is between the cones
+//     return true;
+// }
 
-//Allows other classes to access the array of points of the detected cones
-std::vector<geometry_msgs::Point> LaserProcessing::getCones(){
-    std::vector<geometry_msgs::Point> cones;
-    geometry_msgs::Point cone;
-    //iterates through the cones_ vector pair and converts them into a vector of geometry_msgs::Point variables with 0.0 z value
-    for(auto elem : cones_){
-        cone.x = elem.first;
-        cone.y = elem.second;
-        cone.z = 0.0;
-        cones.push_back(cone);
-    }
-    return cones;
-}
+// //Allows other classes to access the array of points of the detected cones
+// std::vector<geometry_msgs::Point> LaserProcessing::getCones(){
+//     std::vector<geometry_msgs::Point> cones;
+//     geometry_msgs::Point cone;
+//     //iterates through the cones_ vector pair and converts them into a vector of geometry_msgs::Point variables with 0.0 z value
+//     for(auto elem : cones_){
+//         cone.x = elem.first;
+//         cone.y = elem.second;
+//         cone.z = 0.0;
+//         cones.push_back(cone);
+//     }
+//     return cones;
+// }

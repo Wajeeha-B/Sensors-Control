@@ -14,7 +14,8 @@
 #include "sensor_msgs/LaserScan.h"
 
 //We include header of another class we are developing
-// #include "laserprocessing.h"
+#include "laserprocessing.h"
+#include "imageprocessing.h"
 // #include "ackerman.h"
 
 //namespace for the types of markers being generated
@@ -106,12 +107,12 @@ private:
   /// @note This function and the declaration are ROS specific
 //   void goalCallback(const geometry_msgs::PoseArrayConstPtr& msg);
   
-  void lidarCallback(const sensor_msgs::LaserScanConstPtr& msg);
-  void cameraCallback(const sensor_msgs::ImageConstPtr& msg);
+  void laserCallback(const sensor_msgs::LaserScanConstPtr& msg);
+  void imageCallback(const sensor_msgs::ImageConstPtr& msg);
   
 
-//   //! Node handle for communication
-//   ros::NodeHandle nh_;
+  //! Node handle for communication
+  ros::NodeHandle nh_;
 //   //! Visualisation Marker publisher
 //   ros::Publisher pubVis_;
 //   //! UGV brakes publisher
@@ -145,7 +146,7 @@ private:
   //! Pointer to Laser Object
   LaserProcessing* laserProcessingPtr_;
   //! Pointer to Laser Object
-  imageProcessing* imageProcessingPtr_;
+  ImageProcessing* imageProcessingPtr_;
 
 //   //! Stores the position and orientation of the robot
 //   geometry_msgs::Pose robotPose_;

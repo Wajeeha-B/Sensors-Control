@@ -1,4 +1,4 @@
-#include "sc_robot_node.h"
+#include "sample.h"
 #include <iostream>
 #include <cmath>
 #include <thread>
@@ -39,8 +39,8 @@ Sample::Sample(ros::NodeHandle nh) :
     // //subscribing to the predetermined goals
     // sub3_ = nh_.subscribe("/orange/goals", 10, &Sample::goalCallback,this);
 
-    sub1_ = nh_.subscribe("/scan", 100, &Sample::lidarCallback,this);
-    sub2_ = nh_.subscribe("/camera/rgb/image_raw", 100, &Sample::cameraCallback,this);
+    sub1_ = nh_.subscribe("/scan", 100, &Sample::laserCallback,this);
+    sub2_ = nh_.subscribe("/camera/rgb/image_raw", 100, &Sample::imageCallback,this);
 
     // //Publishing markers
     // pubVis_ = nh_.advertise<visualization_msgs::MarkerArray>("visualization_marker",3,false);
@@ -186,7 +186,7 @@ void Sample::laserCallback(const sensor_msgs::LaserScanConstPtr& msg)
     laserData_ = *msg; // We store a copy of the LaserScan in laserData_
 }
 
-void Sample::imageCallback(const sensor_msgs::imageConstPtr& msg)
+void Sample::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
     std::unique_lock<std::mutex> lck(imageDataMtx_); // Locks the data for the laserData to be saved
     imageData_ = *msg; // We store a copy of the LaserScan in laserData_
@@ -269,7 +269,7 @@ void Sample::seperateThread() {
         
 
         //Unlocks all mutexes
-        lck3.unlock();
+        // lck3.unlock();
         lck2.unlock();
         lck1.unlock();
             

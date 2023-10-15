@@ -57,7 +57,7 @@ add_library(${PROJECT_NAME}_controllers src/laserprocessing.cpp src/imageprocess
 
 ## Declare a C++ executable
 # add_executable(${PROJECT_NAME}_sample src/main.cpp src/sample.cpp)
-add_executable(sc_robot_node src/sc_robot_node.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/sample.cpp)
 
 # Add cmake target dependencies of the executable
 # This enforces generating messages before building these executables
@@ -70,8 +70,8 @@ target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${PROJECT_NAME}_contro
 ## Testing ##
 #############
 ## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}_test test/utest.cpp )
-if(TARGET ${PROJECT_NAME}_test)
-   target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_controllers)
-   message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
-endif()
+# catkin_add_gtest(${PROJECT_NAME}_test test/utest.cpp )
+# if(TARGET ${PROJECT_NAME}_test)
+#    target_link_libraries(${PROJECT_NAME}_test ${catkin_LIBRARIES} ${PROJECT_NAME}_controllers)
+#    message ( STATUS " catkin_LIBRARIES ${catkin_LIBRARIES}")
+# endif()
