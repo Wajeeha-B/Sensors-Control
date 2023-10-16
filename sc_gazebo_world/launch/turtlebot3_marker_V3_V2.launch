@@ -27,11 +27,11 @@
   <param name="robot_description1" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model1).urdf.xacro" />
 
   <!-- Spawn the first TurtleBot -->
-  <node name="spawn_urdf1" pkg="gazebo_ros" type="spawn_model" args="-urdf -model turtlebot3_1 -x $(arg x_pos1) -y $(arg y_pos1) -z $(arg z_pos1) -param robot_description1 -Y $(arg yaw_rotation1)"/>
+  <node name="spawn_urdf1" pkg="gazebo_ros" type="spawn_model" args="-urdf -model turtlebot3_1_waffle -x $(arg x_pos1) -y $(arg y_pos1) -z $(arg z_pos1) -param robot_description1 -Y $(arg yaw_rotation1)"/>
 
   <!-- Load the URDF for the second TurtleBot -->
   <param name="robot_description2" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_$(arg model2).urdf.xacro" />
 
   <!-- Spawn the second TurtleBot -->
-  <node name="spawn_urdf2" pkg="gazebo_ros" type="spawn_model" args="-urdf -model turtlebot3_2 -x $(arg x_pos2) -y $(arg y_pos2) -z $(arg z_pos2) -param robot_description2 -Y $(arg yaw_rotation2)"/>
+  <node name="spawn_urdf2" pkg="gazebo_ros" type="spawn_model" args="-urdf -model turtlebot3_2_waffle -x $(arg x_pos2) -y $(arg y_pos2) -z $(arg z_pos2) -param robot_description2 -Y $(arg yaw_rotation2)"/>
 </launch>

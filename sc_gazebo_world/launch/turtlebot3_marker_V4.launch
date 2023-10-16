@@ -1,0 +1,29 @@
+<launch>
+
+  <!-- Include the world launch and set common parameters -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find sc_gazebo_world)/world/Marker_World_V4.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <!-- Define the parameters for the first TurtleBot -->
+  <arg name="model1" default="$(env TURTLEBOT3_MODEL1)" doc="model type for TurtleBot 1 [burger, waffle, waffle_pi]"/>
+  <arg name="x_pos1" default="0.0"/>
+  <arg name="y_pos1" default="0.0"/>
+  <arg name="z_pos1" default="0.0"/>
+  <arg name="yaw_rotation1" default="0"/> <!-- in radians -->
+
+  <!-- Define the parameters for the second TurtleBot -->
+  <arg name="model2" default="$(env TURTLEBOT3_MODEL2)" doc="model type for TurtleBot 2 [burger, waffle, waffle_pi]"/>
+  <arg name="x_pos2" default="-0.8"/> <!-- Adjust the position as needed -->
+  <arg name="y_pos2" default="0.0"/> <!-- Adjust the position as needed -->
+  <arg name="z_pos2" default="0.0"/>
+  <arg name="yaw_rotation2" default="0"/> <!-- in radians -->
+
+</launch>
+
+

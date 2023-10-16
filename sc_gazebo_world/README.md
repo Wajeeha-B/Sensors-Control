@@ -21,4 +21,4 @@ e.g. sc_gazebo_world
 
 
 ## Spawning AR Tag
-rosrun gazebo_ros spawn_model -file /home/wajeeha/catkin_ws/src/Sensors-Control/sc_gazebo_world/model Apriltag36_11_00000/model.sdf -sdf -model Apriltag36_11_00000 -x -0.1 -y 0 -z 0.1
+    rosrun gazebo_ros spawn_model -file /home/wajeeha/catkin_ws/src/Sensors-Control/sc_gazebo_world/model Apriltag36_11_00000/model.sdf -sdf -model Apriltag36_11_00000 -x -0.1 -y 0 -z 0.1

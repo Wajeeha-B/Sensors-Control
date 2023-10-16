@@ -3,23 +3,33 @@
   <asset>
     <contributor>
       <author>Blender User</author>
-      <authoring_tool>Blender 3.6.2 commit date:2023-08-16, commit time:16:43, hash:e53e55951e7a</authoring_tool>
+      <authoring_tool>Blender 3.1.0 commit date:2022-03-08, commit time:18:16, hash:c77597cd0e15</authoring_tool>
     </contributor>
-    <created>2023-09-29T23:44:46</created>
-    <modified>2023-09-29T23:44:46</modified>
+    <created>2022-10-16T08:52:16</created>
+    <modified>2022-10-16T08:52:16</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
   <library_effects>
-    <effect id="Material-effect">
+    <effect id="cube-effect">
       <profile_COMMON>
+        <newparam sid="__withborder_png-surface">
+          <surface type="2D">
+            <init_from>__withborder_png</init_from>
+          </surface>
+        </newparam>
+        <newparam sid="__withborder_png-sampler">
+          <sampler2D>
+            <source>__withborder_png-surface</source>
+          </sampler2D>
+        </newparam>
         <technique sid="common">
           <lambert>
             <emission>
               <color sid="emission">0 0 0 1</color>
             </emission>
             <diffuse>
-              <color sid="diffuse">0.8 0.8 0.8 1</color>
+              <texture texture="__withborder_png-sampler" texcoord="UVMap"/>
             </diffuse>
             <index_of_refraction>
               <float sid="ior">1.45</float>
@@ -29,10 +39,14 @@
       </profile_COMMON>
     </effect>
   </library_effects>
-  <library_images/>
+  <library_images>
+    <image id="__withborder_png" name="__withborder_png">
+      <init_from>0_withborder.png</init_from>
+    </image>
+  </library_images>
   <library_materials>
-    <material id="Material-material" name="Material">
-      <instance_effect url="#Material-effect"/>
+    <material id="cube-material" name="cube">
+      <instance_effect url="#cube-effect"/>
     </material>
   </library_materials>
   <library_geometries>
@@ -59,7 +73,7 @@
           </technique_common>
         </source>
         <source id="Cube-mesh-map-0">
-          <float_array id="Cube-mesh-map-0-array" count="72">0.875 0.5 0.625 0.75 0.625 0.5 0.625 0.75 0.375 1 0.375 0.75 0.625 0 0.375 0.25 0.375 0 0.375 0.5 0.125 0.75 0.125 0.5 0.625 0.5 0.375 0.75 0.375 0.5 0.625 0.25 0.375 0.5 0.375 0.25 0.875 0.5 0.875 0.75 0.625 0.75 0.625 0.75 0.625 1 0.375 1 0.625 0 0.625 0.25 0.375 0.25 0.375 0.5 0.375 0.75 0.125 0.75 0.625 0.5 0.625 0.75 0.375 0.75 0.625 0.25 0.625 0.5 0.375 0.5</float_array>
+          <float_array id="Cube-mesh-map-0-array" count="72">1 0 0 0.9999998 0 0 0.9999983 0.9999983 0 -1.78814e-7 0.9999985 -1.78814e-7 0.9999998 0.9999999 0 0 0.9999999 0 0.9999992 6.25849e-7 7.45058e-7 0.9999989 7.45058e-7 6.25849e-7 0.9999999 1 1.19209e-7 1.19209e-7 1 1.19209e-7 0.9999998 0.9999999 0 0 0.9999999 0 1 0 0.9999998 0.9999999 0 0.9999998 0.9999983 0.9999983 0 0.9999982 0 -1.78814e-7 0.9999998 0.9999999 0 0.9999998 0 0 0.9999992 6.25849e-7 0.9999991 0.9999991 7.45058e-7 0.9999989 0.9999999 1 1.19209e-7 0.9999999 1.19209e-7 1.19209e-7 0.9999998 0.9999999 0 0.9999998 0 0</float_array>
           <technique_common>
             <accessor source="#Cube-mesh-map-0-array" count="36" stride="2">
               <param name="S" type="float"/>
@@ -70,7 +84,7 @@
         <vertices id="Cube-mesh-vertices">
           <input semantic="POSITION" source="#Cube-mesh-positions"/>
         </vertices>
-        <triangles material="Material-material" count="12">
+        <triangles material="cube-material" count="12">
           <input semantic="VERTEX" source="#Cube-mesh-vertices" offset="0"/>
           <input semantic="NORMAL" source="#Cube-mesh-normals" offset="1"/>
           <input semantic="TEXCOORD" source="#Cube-mesh-map-0" offset="2" set="0"/>
@@ -81,30 +95,12 @@
   </library_geometries>
   <library_visual_scenes>
     <visual_scene id="Scene" name="Scene">
-      <node id="Empty_005" name="Empty.005" type="NODE">
-        <matrix sid="transform">-1.60689e-8 -0.367613 3.21377e-8 0 -0.367613 1.60689e-8 -1.40479e-15 0 0 -3.21377e-8 -0.367613 -1.03664 0 0 0 1</matrix>
-      </node>
-      <node id="Empty_004" name="Empty.004" type="NODE">
-        <matrix sid="transform">0.367613 -2.07429e-7 3.21378e-8 0 3.21377e-8 -4.38376e-9 -0.367613 -1.03664 2.07429e-7 0.367613 -4.38374e-9 0 0 0 0 1</matrix>
-      </node>
-      <node id="Empty_003" name="Empty.003" type="NODE">
-        <matrix sid="transform">-0.367613 -1.40479e-15 -3.21377e-8 0 -3.21377e-8 1.60689e-8 0.367613 1.03664 0 0.367613 -1.60689e-8 0 0 0 0 1</matrix>
-      </node>
-      <node id="Empty_002" name="Empty.002" type="NODE">
-        <matrix sid="transform">1.60689e-8 0.367613 -3.21378e-8 0 -0.367613 1.60689e-8 3.21377e-8 0 3.21377e-8 3.21377e-8 0.367613 1.03664 0 0 0 1</matrix>
-      </node>
-      <node id="Empty_001" name="Empty.001" type="NODE">
-        <matrix sid="transform">-1.60689e-8 -1.60689e-8 -0.367613 -1.03664 -0.367613 7.02393e-16 1.60689e-8 0 0 0.367613 -1.60689e-8 0 0 0 0 1</matrix>
-      </node>
-      <node id="Empty" name="Empty" type="NODE">
-        <matrix sid="transform">-1.60689e-8 1.60689e-8 0.3676128 1.03664 0.367613 7.02393e-16 1.60689e-8 0 0 0.3676128 -1.60689e-8 0 0 0 0 1</matrix>
-      </node>
       <node id="Cube" name="Cube" type="NODE">
-        <matrix sid="transform">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1</matrix>
+        <matrix sid="transform">0.04500002 0 0 0 0 0.04500002 0 0 0 0 0.005 0 0 0 0 1</matrix>
         <instance_geometry url="#Cube-mesh" name="Cube">
           <bind_material>
             <technique_common>
-              <instance_material symbol="Material-material" target="#Material-material">
+              <instance_material symbol="cube-material" target="#cube-material">
                 <bind_vertex_input semantic="UVMap" input_semantic="TEXCOORD" input_set="0"/>
               </instance_material>
             </technique_common>
