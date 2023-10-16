@@ -24,6 +24,12 @@ e.g. sc_gazebo_world
     Terminal 3:
     export TURTLEBOT3_MODEL=waffle_pi
      roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
+
+## New Launching
+roslaunch sc_gazebo_world main.launch
+
+## Moving the robot
+rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=robot2/cmd_vel
     
 ## Spawning AR Tag
 Change the directory according to your own path
