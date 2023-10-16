@@ -2,7 +2,7 @@
 <launch>
   <!-- Include the world launch and set common parameters for TurtleBot 1 -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find sc_gazebo_world)/world/Marker_World_V4.world"/>
+    <arg name="world_name" value="$(find sc_gazebo_world)/world/Marker_World_V5.world"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -30,11 +30,7 @@
       <param name="z_pos" value="$(arg z_pos)"/>
       <param name="yaw_rotation" value="$(arg yaw_rotation)"/>
       <!-- Remap cmd_vel topic for TurtleBot 1 -->
-<<<<<<< HEAD
       <remap from="cmd_vel" to="cmd_vel_turtlebot1"/>
-=======
-      <!-- remap from="cmd_vel" to="cmd_vel_turtlebot1"/ -->
->>>>>>> 35510cf42537f1a225715bc9fe5711ba598c9b1b
     </node>
   </group> <!-- Close the group for TurtleBot 1 -->
 
@@ -55,11 +51,7 @@
       <param name="z_pos" value="$(arg z_pos)"/>
       <param name="yaw_rotation" value="$(arg yaw_rotation)"/>
       <!-- Remap cmd_vel topic for TurtleBot 2 -->
-<<<<<<< HEAD
       <remap from="cmd_vel" to="cmd_vel_turtlebot2"/>
-=======
-      <!-- remap from="cmd_vel" to="cmd_vel_turtlebot2"/-->
->>>>>>> 35510cf42537f1a225715bc9fe5711ba598c9b1b
     </node>
   </group> <!-- Close the group for TurtleBot 2 -->
 </launch>
