@@ -15,7 +15,8 @@ using std::endl;
 //Default constructor of the sample class
 Sample::Sample(ros::NodeHandle nh) :
 //   nh_(nh),laserProcessingPtr_(nullptr), ackermanPtr_(nullptr), marker_counter_(0),
-//   running_(false), goalOK_(false), advGoals_(false)
+  running_(false), 
+//goalOK_(false), advGoals_(false)
     nh_(nh),laserProcessingPtr_(nullptr), imageProcessingPtr_(nullptr)
 {
     // //Sets the default robotPose_ to 0
@@ -55,8 +56,8 @@ Sample::Sample(ros::NodeHandle nh) :
 
     pubDrive_ = nh.advertise<geometry_msgs::Twist>("cmd_vel",3,false);
 
-    // //Service to enable the robot to start and stop from command line input
-    // service1_ = nh_.advertiseService("/orange/mission", &Sample::request,this);
+    //Service to enable the robot to start and stop from command line input
+    service1_ = nh_.advertiseService("/mission", &Sample::request,this);
     // //Service to toggle advanced goals from laser data
     // service2_ = nh_.advertiseService("/toggle_advanced", &Sample::advanced,this);
 
@@ -308,12 +309,22 @@ void Sample::seperateThread() {
         // pubVis_.publish(marker_array);
         // pubBrake_.publish(brake);
         geometry_msgs::Twist drive;
-        drive.linear.x = 0.1; //sends it forward
-        drive.linear.y = 0.0;
-        drive.linear.z = 0.0;
-        drive.angular.x = 0.0;
-        drive.angular.y = 0.0;
-        drive.angular.z = 0.0;
+        if(running_){
+            drive.linear.x = 0.1; //sends it forward
+            drive.linear.y = 0.0;
+            drive.linear.z = 0.0;
+            drive.angular.x = 0.0;
+            drive.angular.y = 0.0;
+            drive.angular.z = 0.0;
+        }
+        else{
+            drive.linear.x = 0.0; //sends it forward
+            drive.linear.y = 0.0;
+            drive.linear.z = 0.0;
+            drive.angular.x = 0.0;
+            drive.angular.y = 0.0;
+            drive.angular.z = 0.0;
+        }
 
         pubDrive_.publish(drive);
 
@@ -323,38 +334,40 @@ void Sample::seperateThread() {
     }
 }
 
-// //Service that handles starting and stopping the missions based on command line input
-// bool Sample::request(std_srvs::SetBool::Request  &req,
-//              std_srvs::SetBool::Response &res)
-// {
-//     //If the request is true, start the mission
-//     if(req.data)
-//     {
-//         ROS_INFO_STREAM("Requested: Start mission");
-//         //Checks if the goal is valid before proceeding
-//         if(goalOK_){
-//             running_ = true; //start the car if there is a goal
-//             res.success = true;
-//             res.message = "Car started, driving to goal";
-//         } 
-//         //If the goal is invalid, dont start the mission
-//         else {
-//             res.success = false;
-//             res.message = "Couldn't find the goal!";
-//             return false;
-//         }
-//     }
-//     //if the request is false, stop the mission
-//     else
-//     {
-//         ROS_INFO_STREAM("Requested: Stop mission");
-//         res.success = true;
-//         res.message = "Car stopping";
-//         running_ = false;
-//     }
-//     //return true when the service completes its request
-//     return true;
-// }
+//Service that handles starting and stopping the missions based on command line input
+//Communicate with this service using 
+//rosservice call /mission "data: true"
+bool Sample::request(std_srvs::SetBool::Request  &req,
+             std_srvs::SetBool::Response &res)
+{
+    //If the request is true, start the mission
+    if(req.data)
+    {
+        ROS_INFO_STREAM("Requested: Start mission");
+        //Checks if the goal is valid before proceeding
+        // if(goalOK_){
+            running_ = true; //start the car if there is a goal
+            res.success = true;
+            res.message = "The Turtlebot has started it's mission";
+        // } 
+        //If the goal is invalid, dont start the mission
+        // else {
+        //     res.success = false;
+        //     res.message = "Couldn't find the goal!";
+        //     return false;
+        // }
+    }
+    //if the request is false, stop the mission
+    else
+    {
+        ROS_INFO_STREAM("Requested: Stop mission");
+        res.success = true;
+        res.message = "Turtlebot stopping";
+        running_ = false;
+    }
+    //return true when the service completes its request
+    return true;
+}
 
 // //Service that handles toggling between advanced and basic goals, basic goals are on by default
 // bool Sample::advanced(std_srvs::SetBool::Request  &req,

@@ -7,7 +7,7 @@
 
 //ROS data types
 // #include "visualization_msgs/MarkerArray.h"
-// #include "std_srvs/SetBool.h"
+#include "std_srvs/SetBool.h"
 // #include "nav_msgs/Odometry.h"
 // #include "geometry_msgs/PoseArray.h"
 #include "sensor_msgs/Image.h"
@@ -79,8 +79,8 @@ public:
   /// @param [in] res The response, a boolean and string value indicating if starting the mission was successful.
   ///
   /// @return bool - Will return true to indicate the request succeeded.
-//   bool request(std_srvs::SetBool::Request  &req,
-//                std_srvs::SetBool::Response &res);
+  bool request(std_srvs::SetBool::Request  &req,
+               std_srvs::SetBool::Response &res);
   
   /// @brief request service callback for toggling between advanced and basic goals.
   /// @param [in] req the request, if true advanced goals is used, if false basic is used.
@@ -133,8 +133,8 @@ private:
   //! Laser scan subscriber, uses LaserCallback
   ros::Subscriber sub2_;
 
-//   //! Mission service, starts and stops the mission
-//   ros::ServiceServer service1_;
+  //! Mission service, starts and stops the mission
+  ros::ServiceServer service1_;
 //   //! Advanced goals service, toggles between advanced and basic goals
 //   ros::ServiceServer service2_;
 
@@ -173,8 +173,8 @@ private:
 //   unsigned int marker_counter_;
 //   //! Stores the current goal
 //   geometry_msgs::Point goal_;
-//   //! Flag for whether the car is moving and the mission is active
-//   std::atomic<bool> running_; 
+  //! Flag for whether the car is moving and the mission is active
+  std::atomic<bool> running_; 
 //   //! Flag for is the goal is invalid
 //   std::atomic<bool> goalOK_;
 //   //! Flag for the toggle for using advanced goals
