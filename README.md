@@ -26,7 +26,7 @@ e.g. sc_gazebo_world
      roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 
 ## New Launching
-roslaunch sc_gazebo_world_v1 main.launch
+roslaunch sc_gazebo_world main.launch
 
 ## Moving the robot
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=robot2/cmd_vel
