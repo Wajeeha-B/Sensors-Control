@@ -11,8 +11,27 @@ ImageProcessing::ImageProcessing(sensor_msgs::Image image):
 
 
 void ImageProcessing::TemplateMatch(){
-    cv::Mat img = cv::imread("messi5.jpg", cv::IMREAD_GRAYSCALE);
+    // cv::Mat img = cv::imread("messi5.jpg", cv::IMREAD_GRAYSCALE);
+
+    //Whatever ChatGPT reckons
+    int width = image_.width;
+    int height = image_.height;
+    std::string encoding = image_.encoding;
+
+    cv::Mat img;
+
+    // Configure the cv::Mat based on the encoding information
+    if (encoding == "8UC1") img = cv::Mat(height, width, CV_8UC1);
+    else if (encoding == "8UC3") img = cv::Mat(height, width, CV_8UC3);
+    else if (encoding == "bgr8") img = cv::Mat(height, width, CV_8UC3);
+    else if (encoding == "rgb8") img = cv::Mat(height, width, CV_8UC3);
+    else{
+        // Handle other encodings if needed
+        // ROS_ERROR("Unsupported image encoding: %s", encoding.c_str());
+    }
     assert(!img.empty() && "File could not be read, check with cv::imread()");
+    
+    memcpy(img.data, &image_.data[0], img.total() * img.elemSize());
 
     cv::Mat img2 = img.clone();
     cv::Mat templateImg = cv::imread("template.jpg", cv::IMREAD_GRAYSCALE);
@@ -22,32 +41,27 @@ void ImageProcessing::TemplateMatch(){
     int h = templateImg.rows;
 
     // All the 6 methods for comparison in a list
-    std::vector<string> methods;
-    methods.push_back("CV_TM_CCOEFF");
-    methods.push_back("CV_TM_CCOEFF_NORMED");
-    methods.push_back("CV_TM_CCORR");
-    methods.push_back("CV_TM_CCORR_NORMED");
-    methods.push_back("CV_TM_SQDIFF");
-    methods.push_back("CV_TM_SQDIFF_NORMED");
-    // {
-    //     "CV_TM_CCOEFF", "CV_TM_CCOEFF_NORMED", "CV_TM_CCORR", 
-    //     "CV_TM_CCORR_NORMED", "CV_TM_SQDIFF", "CV_TM_SQDIFF_NORMED"
-    // };
+    std::vector<int> methods {0,1,2,3,4,5};
+    /*
+    1. "CV_TM_CCOEFF"
+    2. "CV_TM_CCOEFF_NORMED"
+    3. "CV_TM_CCORR", 
+    4. "CV_TM_CCORR_NORMED"
+    5. "CV_TM_SQDIFF"
+    6. "CV_TM_SQDIFF_NORMED"
+    */
 
-    // for (int method = 0; method < methods.size(); method++) {
-        int i = 0;
     for (auto method : methods) {
         cv::Mat img = img2.clone();
         cv::Mat result;
         cv::matchTemplate(img, templateImg, result, method);
-        i++;
 
         double minVal, maxVal;
         cv::Point minLoc, maxLoc;
         cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
 
         cv::Point matchLoc;
-        if (method == "CV_TM_SQDIFF" || method == "CV_TM_SQDIFF_NORMED") {
+        if (method == 4 || method == 5) {
             matchLoc = minLoc;
         } else {
             matchLoc = maxLoc;
@@ -63,12 +77,12 @@ void ImageProcessing::TemplateMatch(){
 
         std::string methodName;
         switch (method) {
-            case "CV_TM_CCOEFF": methodName = "CV_TM_CCOEFF"; break;
-            case "CV_TM_CCOEFF_NORMED": methodName = "CV_TM_CCOEFF_NORMED"; break;
-            case "CV_TM_CCORR": methodName = "CV_TM_CCORR"; break;
-            case "CV_TM_CCORR_NORMED": methodName = "CV_TM_CCORR_NORMED"; break;
-            case "CV_TM_SQDIFF": methodName = "CV_TM_SQDIFF"; break;
-            case "CV_TM_SQDIFF_NORMED": methodName = "CV_TM_SQDIFF_NORMED"; break;
+            case 0: methodName = "CV_TM_CCOEFF"; break;
+            case 1: methodName = "CV_TM_CCOEFF_NORMED"; break;
+            case 2: methodName = "CV_TM_CCORR"; break;
+            case 3: methodName = "CV_TM_CCORR_NORMED"; break;
+            case 4: methodName = "CV_TM_SQDIFF"; break;
+            case 5: methodName = "CV_TM_SQDIFF_NORMED"; break;
         }
 
         cv::imshow(methodName, img);
