@@ -6,6 +6,12 @@
 #include <math.h>
 // #include "tf/transform_datatypes.h"
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/opencv_modules.hpp>
+// #include <iostream>
+
 /*!
  *  \brief     Image Processing Class
  *  \details
@@ -26,6 +32,8 @@ public:
   /// @brief Constructor for laser processing
   /// @param [in] Image - laserScan to be processed
   ImageProcessing(sensor_msgs::Image image);
+
+  void TemplateMatch(void);
   
   /// @brief Counts the number of valid readings from the laser scanner
   /// @return The number of readings

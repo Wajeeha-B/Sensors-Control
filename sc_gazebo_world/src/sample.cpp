@@ -339,7 +339,7 @@ void Sample::seperateThread() {
 //rosservice call /mission "data: true"
 bool Sample::request(std_srvs::SetBool::Request  &req,
              std_srvs::SetBool::Response &res)
-{
+{  
     //If the request is true, start the mission
     if(req.data)
     {

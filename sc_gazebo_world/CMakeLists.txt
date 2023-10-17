@@ -12,11 +12,17 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   rosbag # Needed to rosbag manipulation
   roslib # Needed for ros::package::getPath
+  cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
 #find_package(Boost REQUIRED COMPONENTS system signals)
 find_package(Eigen3 REQUIRED)
+
+# OpenCV
+find_package(OpenCV REQUIRED)
+# include_directories(${OpenCV_INCLUDE_DIRS}) # Not needed for CMake >= 2.8.11
+# target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated -Wdeprecated-declarations")
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
@@ -50,6 +56,7 @@ include_directories(
   src
   ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
+  ${OpenCV_INCLUDE_DIR}
 )
 
 ## Declare a C++ library
@@ -64,7 +71,7 @@ add_executable(${PROJECT_NAME} src/main.cpp src/sample.cpp)
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 # Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${PROJECT_NAME}_controllers)
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${PROJECT_NAME}_controllers ${OpenCV_LIBS})
 
 #############
 ## Testing ##

@@ -3,11 +3,78 @@
 #include <numeric>
 
 using namespace std;
+// using namespace cv;
 
 //Default constructor of Laserprocessing, needs an initial set of laser data to be initialised
 ImageProcessing::ImageProcessing(sensor_msgs::Image image):
     image_(image){}
 
+
+void ImageProcessing::TemplateMatch(){
+    cv::Mat img = cv::imread("messi5.jpg", cv::IMREAD_GRAYSCALE);
+    assert(!img.empty() && "File could not be read, check with cv::imread()");
+
+    cv::Mat img2 = img.clone();
+    cv::Mat templateImg = cv::imread("template.jpg", cv::IMREAD_GRAYSCALE);
+    assert(!templateImg.empty() && "File could not be read, check with cv::imread()");
+
+    int w = templateImg.cols;
+    int h = templateImg.rows;
+
+    // All the 6 methods for comparison in a list
+    std::vector<string> methods;
+    methods.push_back("CV_TM_CCOEFF");
+    methods.push_back("CV_TM_CCOEFF_NORMED");
+    methods.push_back("CV_TM_CCORR");
+    methods.push_back("CV_TM_CCORR_NORMED");
+    methods.push_back("CV_TM_SQDIFF");
+    methods.push_back("CV_TM_SQDIFF_NORMED");
+    // {
+    //     "CV_TM_CCOEFF", "CV_TM_CCOEFF_NORMED", "CV_TM_CCORR", 
+    //     "CV_TM_CCORR_NORMED", "CV_TM_SQDIFF", "CV_TM_SQDIFF_NORMED"
+    // };
+
+    // for (int method = 0; method < methods.size(); method++) {
+        int i = 0;
+    for (auto method : methods) {
+        cv::Mat img = img2.clone();
+        cv::Mat result;
+        cv::matchTemplate(img, templateImg, result, method);
+        i++;
+
+        double minVal, maxVal;
+        cv::Point minLoc, maxLoc;
+        cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
+
+        cv::Point matchLoc;
+        if (method == "CV_TM_SQDIFF" || method == "CV_TM_SQDIFF_NORMED") {
+            matchLoc = minLoc;
+        } else {
+            matchLoc = maxLoc;
+        }
+
+        cv::rectangle(img, matchLoc, cv::Point(matchLoc.x + w, matchLoc.y + h), cv::Scalar(255), 2);
+
+        cv::Mat displayResult;
+        cv::normalize(result, displayResult, 0, 255, cv::NORM_MINMAX, -1, cv::Mat());
+        cv::imshow("Matching Result", displayResult);
+        cv::imshow("Detected Point", img);
+        cv::waitKey(0);
+
+        std::string methodName;
+        switch (method) {
+            case "CV_TM_CCOEFF": methodName = "CV_TM_CCOEFF"; break;
+            case "CV_TM_CCOEFF_NORMED": methodName = "CV_TM_CCOEFF_NORMED"; break;
+            case "CV_TM_CCORR": methodName = "CV_TM_CCORR"; break;
+            case "CV_TM_CCORR_NORMED": methodName = "CV_TM_CCORR_NORMED"; break;
+            case "CV_TM_SQDIFF": methodName = "CV_TM_SQDIFF"; break;
+            case "CV_TM_SQDIFF_NORMED": methodName = "CV_TM_SQDIFF_NORMED"; break;
+        }
+
+        cv::imshow(methodName, img);
+        cv::waitKey(0);
+    }
+}
 // //Counts the number of valid readings from the laser bouncing off an object
 // unsigned int LaserProcessing::countObjectReadings()
 // {
