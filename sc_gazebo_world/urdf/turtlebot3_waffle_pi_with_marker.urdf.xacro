@@ -239,7 +239,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://turtlebot_follower/meshes/tag36_11_00000_with_border.dae"/>
+        <mesh filename="package://sc_gazebo_world/meshes/tag36_11_00000_with_border.dae"/>
       </geometry>
     </visual>
   </link>
