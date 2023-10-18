@@ -200,7 +200,7 @@ void Sample::seperateThread() {
     //       robotPose_.orientation.x+
     //       robotPose_.orientation.y+
     //       robotPose_.orientation.z == 0.0);
-
+    while(laserData_.range_min+laserData_.range_max == 0.0 && imageData_.height+imageData_.width == 0.0);
     //NEED TO WAIT FOR A DATA POINT TO BE POPULATED LIKE ABOVE
 
     //Limits the execution of this code to 5Hz
@@ -308,6 +308,12 @@ void Sample::seperateThread() {
         // // The markers and brakes are published whether the car is running or not
         // pubVis_.publish(marker_array);
         // pubBrake_.publish(brake);
+
+        // unsigned int i = laserProcessing.countObjectReadings();
+        // ROS_INFO("Laser readings: %u", i);
+
+        imageProcessing.TemplateMatch();
+
         geometry_msgs::Twist drive;
         if(running_){
             drive.linear.x = 0.1; //sends it forward

@@ -2,6 +2,7 @@
 #define IMAGEPROCESSING_H
 
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/image_encodings.h>
 // #include <geometry_msgs/Pose.h>
 #include <math.h>
 // #include "tf/transform_datatypes.h"
@@ -10,7 +11,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/opencv_modules.hpp>
-// #include <iostream>
+#include <iostream>
+#include "ros/ros.h"
 
 /*!
  *  \brief     Image Processing Class

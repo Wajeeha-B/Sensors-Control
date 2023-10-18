@@ -27,7 +27,7 @@ void ImageProcessing::TemplateMatch(){
     else if (encoding == "rgb8") img = cv::Mat(height, width, CV_8UC3);
     else{
         // Handle other encodings if needed
-        // ROS_ERROR("Unsupported image encoding: %s", encoding.c_str());
+        ROS_ERROR("Unsupported image encoding: %s", encoding.c_str());
     }
     assert(!img.empty() && "File could not be read, check with cv::imread()");
     
