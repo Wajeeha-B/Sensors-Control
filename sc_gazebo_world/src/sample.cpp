@@ -33,15 +33,8 @@ Sample::Sample(ros::NodeHandle nh) :
     // goal_.y = 0.0;
     // goal_.z = 0.0;
 
-    // //Subscribing to odometry UGV
-    // sub1_ = nh_.subscribe("ugv_odom", 1000, &Sample::odomCallback,this);
-    // //Subscribing to laser scan
-    // sub2_ = nh_.subscribe("/orange/laser/scan", 10, &Sample::laserCallback,this);
-    // //subscribing to the predetermined goals
-    // sub3_ = nh_.subscribe("/orange/goals", 10, &Sample::goalCallback,this);
-
-    sub1_ = nh_.subscribe("/scan", 100, &Sample::laserCallback,this);
-    sub2_ = nh_.subscribe("/camera/rgb/image_raw", 100, &Sample::imageCallback,this);
+    sub1_ = nh_.subscribe("/robot1/scan", 100, &Sample::laserCallback,this);
+    sub2_ = nh_.subscribe("/robot1/camera/rgb/image_raw", 100, &Sample::imageCallback,this);
 
     // //Publishing markers
     // pubVis_ = nh_.advertise<visualization_msgs::MarkerArray>("visualization_marker",3,false);
@@ -54,7 +47,7 @@ Sample::Sample(ros::NodeHandle nh) :
     // //Publishing cones
     // pubCones_ = nh_.advertise<geometry_msgs::PoseArray>("orange/cones",3,false);
 
-    pubDrive_ = nh.advertise<geometry_msgs::Twist>("cmd_vel",3,false);
+    pubDrive_ = nh.advertise<geometry_msgs::Twist>("/robot1/cmd_vel",3,false);
 
     //Service to enable the robot to start and stop from command line input
     service1_ = nh_.advertiseService("/mission", &Sample::request,this);

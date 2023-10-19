@@ -31,6 +31,9 @@ void ImageProcessing::TemplateMatch(){
     }
     assert(!img.empty() && "File could not be read, check with cv::imread()");
     
+    //Convert camera img to grayscale
+    cv::cvtColor(img, img, cv::COLOR_RGB2GRAY);
+
     memcpy(img.data, &image_.data[0], img.total() * img.elemSize());
 
     cv::Mat img2 = img.clone();
@@ -72,9 +75,9 @@ void ImageProcessing::TemplateMatch(){
 
         cv::Mat displayResult;
         cv::normalize(result, displayResult, 0, 255, cv::NORM_MINMAX, -1, cv::Mat());
-        cv::imshow("Matching Result", displayResult);
-        cv::imshow("Detected Point", img);
-        cv::waitKey(0);
+        // cv::imshow("Matching Result", displayResult);
+        // cv::imshow("Detected Point", img);
+        // cv::waitKey(0);
 
         std::string methodName;
         switch (method) {
@@ -86,8 +89,8 @@ void ImageProcessing::TemplateMatch(){
             case 5: methodName = "CV_TM_SQDIFF_NORMED"; break;
         }
 
-        cv::imshow(methodName, img);
-        cv::waitKey(0);
+        // cv::imshow(methodName, img);
+        // cv::waitKey(0);
     }
 }
 // //Counts the number of valid readings from the laser bouncing off an object
