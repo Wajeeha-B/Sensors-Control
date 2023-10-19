@@ -12,29 +12,21 @@ e.g. sc_gazebo_world
     catkin_make
 
 ## Launching the Simulation
-     Terminal 1:
-    export TURTLEBOT3_MODEL1=waffle_pi
-    export TURTLEBOT3_MODEL2=waffle_pi
-    roslaunch sc_gazebo_world turtlebot3_marker_V3_V2\ .launch
-
-    Terminal 2:
-    export TURTLEBOT3_MODEL=waffle_pi
-    roslaunch turtlebot3_gazebo turtlebot3_gazebo_rviz.launch
-
-    Terminal 3:
-    export TURTLEBOT3_MODEL=waffle_pi
-     roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
-
-## New Launching
+Terminal 1:
 roslaunch sc_gazebo_world main.launch
 
-## Moving the robot
+Terminal 2 (To control the Turtlebot Guider):
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=robot2/cmd_vel
-    
-## Spawning AR Tag
-Change the directory according to your own path
 
-rosrun gazebo_ros spawn_model -file /home/wajeeha/catkin_ws/src/Sensors-Control/sc_gazebo_world/model/Apriltag36_11_00000/model.sdf -sdf -model Apriltag36_11_00000 -x 0 -y 0 -z 0
+Terminal 3 (Open the bag):
+cd  catkin_ws/src/Sensors-Control/sc_gazebo_word/src/bag
+rosbag play -r 0.1 –clock -l Main_record.bag
 
-## Video
-https://drive.google.com/file/d/125ZiM6GYPrjkZ3lm5_p5PHiODzwtuHtM/view?usp=sharing
+Recording a bag:
+Open the simulation(gazebo)
+cd  ~/catkin_ws/src/Sensors-Control/sc_gazebo_word/src/bag
+rosbag record /robot1/scan /robot2/imu -l 10
+
+Terminal 4(Rosservice call):
+rosservice call /mission "data: true"
+
