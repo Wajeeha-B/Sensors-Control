@@ -5,6 +5,8 @@
 // #include <geometry_msgs/Pose.h>
 #include <math.h>
 // #include "tf/transform_datatypes.h"
+#include <iostream>
+#include "ros/ros.h"
 
 /*!
  *  \brief     Laser Processing Class
@@ -35,6 +37,8 @@ public:
   /// @return The number of segments that are cones
   unsigned int countSegments();
 
+  void myFunction(int myInt);
+
   /// @brief Finds the midpoint between the two closest cones that are detected by the laser scanner
   /// @return A geometry_msgs::Point variable with the x,y,z location of the midpoint
   // geometry_msgs::Point detectRoadCentre();
@@ -55,6 +59,7 @@ private:
     float CONE_RANGE_ = 0.3;
     //! Stores a vector of cones as x and y coordinate pairs
     std::vector<std::pair<float, float>> cones_;
+
     // //! Stores the two closest cones
     // geometry_msgs::Point cone1_, cone2_;
 };

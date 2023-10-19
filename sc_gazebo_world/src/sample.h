@@ -175,6 +175,7 @@ private:
 //   geometry_msgs::Point goal_;
   //! Flag for whether the car is moving and the mission is active
   std::atomic<bool> running_; 
+  int myInt = 0;
 //   //! Flag for is the goal is invalid
 //   std::atomic<bool> goalOK_;
 //   //! Flag for the toggle for using advanced goals

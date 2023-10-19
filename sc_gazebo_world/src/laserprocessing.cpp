@@ -85,6 +85,12 @@ unsigned int LaserProcessing::countSegments()
     return count;
 }
 
+void LaserProcessing::myFunction(int myInt){
+    //does whatever
+    myInt++;
+    // ROS_INFO("%d", myInt);
+}
+
 //finds the midpoint between two of the closest cones detected, one from the left and one from the right
 // geometry_msgs::Point LaserProcessing::detectRoadCentre(){
 //     geometry_msgs::Point pt;

@@ -306,7 +306,8 @@ void Sample::seperateThread() {
         // ROS_INFO("Laser readings: %u", i);
 
         imageProcessing.TemplateMatch();
-
+        laserProcessing.myFunction(myInt);
+        
         geometry_msgs::Twist drive;
         if(running_){
             drive.linear.x = 0.1; //sends it forward
