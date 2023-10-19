@@ -18,7 +18,10 @@ roslaunch sc_gazebo_world main.launch
 Terminal 2 (To control the Turtlebot Guider):
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=robot2/cmd_vel
 
-Terminal 3 (Open the bag):
+Terminal 3 (Rosservice call):
+rosservice call /mission "data: true"
+
+Alternative to Terminal 1 (Open the bag):
 cd  catkin_ws/src/Sensors-Control/sc_gazebo_word/src/bag
 rosbag play -r 0.1 –clock -l Main_record.bag
 
@@ -27,6 +30,5 @@ Open the simulation(gazebo)
 cd  ~/catkin_ws/src/Sensors-Control/sc_gazebo_word/src/bag
 rosbag record /robot1/scan /robot2/imu -l 10
 
-Terminal 4(Rosservice call):
-rosservice call /mission "data: true"
+
 
