@@ -23,12 +23,15 @@ rosservice call /mission "data: true"
 
 Alternative to Terminal 1 (Open the bag):
 cd  catkin_ws/src/Sensors-Control/sc_gazebo_word/src/bag
-rosbag play -r 0.1 –clock -l Main_record.bag
+rosbag play -r 0.1 --clock -l Main_record.bag
 
 Recording a bag:
 Open the simulation(gazebo)
 cd  ~/catkin_ws/src/Sensors-Control/sc_gazebo_word/src/bag
 rosbag record /robot1/scan /robot2/imu -l 10
+
+Reset the gazebo world (might not work)
+rosservice call /gazebo/reset_world "{}"
 
 
 
