@@ -10,10 +10,155 @@ ImageProcessing::ImageProcessing(sensor_msgs::Image image):
     image_(image){}
 
 
-void ImageProcessing::TemplateMatch(){
-    // cv::Mat img = cv::imread("messi5.jpg", cv::IMREAD_GRAYSCALE);
+// void ImageProcessing::TemplateMatch(){
+//     // cv::Mat img = cv::imread("messi5.jpg", cv::IMREAD_GRAYSCALE);
 
-    //Whatever ChatGPT reckons
+//     //Whatever ChatGPT reckons
+//     int width = image_.width;
+//     int height = image_.height;
+//     std::string encoding = image_.encoding;
+
+//     cv::Mat img;
+
+//     // Configure the cv::Mat based on the encoding information
+//     if (encoding == "8UC1") img = cv::Mat(height, width, CV_8UC1);
+//     else if (encoding == "8UC3") img = cv::Mat(height, width, CV_8UC3);
+//     else if (encoding == "bgr8") img = cv::Mat(height, width, CV_8UC3);
+//     else if (encoding == "rgb8") img = cv::Mat(height, width, CV_8UC3);
+//     else{
+//         // Handle other encodings if needed
+//         ROS_ERROR("Unsupported image encoding: %s", encoding.c_str());
+//     }
+
+//     assert(!img.empty() && "File could not be read, check with cv::imread()");
+//     // imshow("raw", img);
+//     // cv::waitKey(0);
+//     //Convert camera img to grayscale
+//     cv::cvtColor(img, img, cv::COLOR_RGB2GRAY);
+
+//     memcpy(img.data, &image_.data[0], img.total() * img.elemSize());
+
+//     cv::Mat img2 = img.clone();
+//     //Starting from the username folder
+//     cv::Mat templateImg = cv::imread("catkin_ws/src/Sensors-Control/sc_gazebo_world/src/tag36_11_00000rqt.jpg", cv::IMREAD_GRAYSCALE);
+//     assert(!templateImg.empty() && "File could not be read, check with cv::imread()");
+
+//     int w = templateImg.cols;
+//     int h = templateImg.rows;
+
+//     // All the 6 methods for comparison in a list
+//     std::vector<int> methods {0,1,2,3,4,5};
+//     /*
+//     1. "CV_TM_CCOEFF"
+//     2. "CV_TM_CCOEFF_NORMED"
+//     3. "CV_TM_CCORR", 
+//     4. "CV_TM_CCORR_NORMED"
+//     5. "CV_TM_SQDIFF"
+//     6. "CV_TM_SQDIFF_NORMED"
+//     */
+
+//     for (auto method : methods) {
+//         cv::Mat img = img2.clone();
+//         cv::Mat result;
+//         cv::matchTemplate(img, templateImg, result, method);
+
+//         double minVal, maxVal;
+//         cv::Point minLoc, maxLoc;
+//         cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
+
+//         cv::Point matchLoc;
+//         if (method == 4 || method == 5) {
+//             matchLoc = minLoc;
+//         } else {
+//             matchLoc = maxLoc;
+//         }
+
+//         cv::rectangle(img, matchLoc, cv::Point(matchLoc.x + w, matchLoc.y + h), cv::Scalar(255), 2);
+
+//         cv::Mat displayResult;
+//         cv::normalize(result, displayResult, 0, 255, cv::NORM_MINMAX, -1, cv::Mat());
+//         cv::imshow("Result", result);
+//         cv::imshow("Matching Result", displayResult);
+//         cv::imshow("Detected Point", img);
+//         // cv::waitKey(0);
+
+//         std::string methodName;
+//         switch (method) {
+//             case 0: methodName = "CV_TM_CCOEFF"; break;
+//             case 1: methodName = "CV_TM_CCOEFF_NORMED"; break;
+//             case 2: methodName = "CV_TM_CCORR"; break;
+//             case 3: methodName = "CV_TM_CCORR_NORMED"; break;
+//             case 4: methodName = "CV_TM_SQDIFF"; break;
+//             case 5: methodName = "CV_TM_SQDIFF_NORMED"; break;
+//         }
+
+//         cv::imshow(methodName, img);
+//         // cv::waitKey(0);
+//     }
+// }
+
+// void ImageProcessing::TemplateMatch2(){
+//     // bool use_mask;
+//     cv::Mat img;
+//     cv::Mat templ;
+//     // cv::Mat mask;
+//     cv::Mat result;
+//     const char *image_window = "Source Image";
+//     const char *result_window = "Result window";
+//     std::vector<int> match_method = {0,2}; //0,1,2,5 only 0,2 seems to work
+//     int max_Trackbar = 5;
+    
+//     // void MatchingMethod( int, void* );
+
+//     //Whatever ChatGPT reckons
+//     int width = image_.width;
+//     int height = image_.height;
+//     std::string encoding = image_.encoding;
+
+//     // Configure the cv::Mat based on the encoding information
+//     if (encoding == "8UC1") img = cv::Mat(height, width, CV_8UC1);
+//     else if (encoding == "8UC3") img = cv::Mat(height, width, CV_8UC3);
+//     else if (encoding == "bgr8") img = cv::Mat(height, width, CV_8UC3);
+//     else if (encoding == "rgb8") img = cv::Mat(height, width, CV_8UC3);
+//     else{
+//         // Handle other encodings if needed
+//         ROS_ERROR("Unsupported image encoding: %s", encoding.c_str());
+//     }
+
+//     assert(!img.empty() && "File could not be read, check with cv::imread()");
+
+//     templ = imread("catkin_ws/src/Sensors-Control/sc_gazebo_world/src/tag36_11_00000rqt.jpg", cv::IMREAD_COLOR);
+//     assert(!templ.empty() && "File could not be read, check with cv::imread()");
+//     // const char* trackbar_label = "Method: \n 0: SQDIFF \n 1: SQDIFF NORMED \n 2: TM CCORR \n 3: TM CCORR NORMED \n 4: TM COEFF \n 5: TM COEFF NORMED";
+//     // cv::createTrackbar( trackbar_label, image_window, &match_method, max_Trackbar, MatchingMethod );
+
+//     // MatchingMethod( 0, 0 );
+
+//     cv::Mat img_display;
+//     img.copyTo(img_display);
+//     for(auto method : match_method){
+//         cv::matchTemplate( img, templ, result, method);
+
+//         cv::normalize( result, result, 0, 255, cv::NORM_MINMAX, -1, cv::Mat() );
+
+//         double minVal, maxVal;
+//         cv::Point minLoc, maxLoc;
+//         cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
+
+//         cv::Point matchLoc;
+//         // if (method == 4 || method == 5 || method == 0 || method == 2) matchLoc = minLoc;
+//         // else matchLoc = maxLoc;
+//         matchLoc = minLoc;
+
+//         cv::rectangle( img_display, matchLoc, cv::Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), cv::Scalar::all(0), 2, 8, 0 );
+//         cv::rectangle( result, matchLoc, cv::Point( matchLoc.x + templ.cols , matchLoc.y + templ.rows ), cv::Scalar::all(0), 2, 8, 0 );
+//         cv::imshow( image_window, img_display );
+//         cv::imshow( result_window, result );
+//         cv::waitKey(0);
+//     }
+// }
+
+int ImageProcessing::TemplateMatch(){
     int width = image_.width;
     int height = image_.height;
     std::string encoding = image_.encoding;
@@ -29,69 +174,37 @@ void ImageProcessing::TemplateMatch(){
         // Handle other encodings if needed
         ROS_ERROR("Unsupported image encoding: %s", encoding.c_str());
     }
-    assert(!img.empty() && "File could not be read, check with cv::imread()");
-    
-    //Convert camera img to grayscale
-    cv::cvtColor(img, img, cv::COLOR_RGB2GRAY);
 
+    assert(!img.empty() && "File could not be read, check with cv::imread()");
     memcpy(img.data, &image_.data[0], img.total() * img.elemSize());
 
     cv::Mat img2 = img.clone();
     //Starting from the username folder
-    cv::Mat templateImg = cv::imread("catkin_ws/src/Sensors-Control/sc_gazebo_world/src/tag36_11_00000.jpg", cv::IMREAD_GRAYSCALE);
+    cv::Mat templateImg = cv::imread("catkin_ws/src/Sensors-Control/sc_gazebo_world/src/tag36_11_00000rqt.jpg", cv::IMREAD_COLOR);
     assert(!templateImg.empty() && "File could not be read, check with cv::imread()");
 
     int w = templateImg.cols;
     int h = templateImg.rows;
+    int method = 0;
 
-    // All the 6 methods for comparison in a list
-    std::vector<int> methods {0,1,2,3,4,5};
-    /*
-    1. "CV_TM_CCOEFF"
-    2. "CV_TM_CCOEFF_NORMED"
-    3. "CV_TM_CCORR", 
-    4. "CV_TM_CCORR_NORMED"
-    5. "CV_TM_SQDIFF"
-    6. "CV_TM_SQDIFF_NORMED"
-    */
+    cv::Mat result;
+    cv::matchTemplate(img, templateImg, result, method);
 
-    for (auto method : methods) {
-        cv::Mat img = img2.clone();
-        cv::Mat result;
-        cv::matchTemplate(img, templateImg, result, method);
+    double minVal, maxVal;
+    cv::Point minLoc, maxLoc;
+    cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
 
-        double minVal, maxVal;
-        cv::Point minLoc, maxLoc;
-        cv::minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
+    cv::Point matchLoc = minLoc;
+    // ROS_INFO("\nmatchLoc.x = %d\nmatchLoc.y = %d", matchLoc.x, matchLoc.y);
+    cv::rectangle(img, matchLoc, cv::Point(matchLoc.x + w, matchLoc.y + h), cv::Scalar(255), 2);
 
-        cv::Point matchLoc;
-        if (method == 4 || method == 5) {
-            matchLoc = minLoc;
-        } else {
-            matchLoc = maxLoc;
-        }
-
-        cv::rectangle(img, matchLoc, cv::Point(matchLoc.x + w, matchLoc.y + h), cv::Scalar(255), 2);
-
-        cv::Mat displayResult;
-        cv::normalize(result, displayResult, 0, 255, cv::NORM_MINMAX, -1, cv::Mat());
-        // cv::imshow("Matching Result", displayResult);
-        // cv::imshow("Detected Point", img);
-        // cv::waitKey(0);
-
-        std::string methodName;
-        switch (method) {
-            case 0: methodName = "CV_TM_CCOEFF"; break;
-            case 1: methodName = "CV_TM_CCOEFF_NORMED"; break;
-            case 2: methodName = "CV_TM_CCORR"; break;
-            case 3: methodName = "CV_TM_CCORR_NORMED"; break;
-            case 4: methodName = "CV_TM_SQDIFF"; break;
-            case 5: methodName = "CV_TM_SQDIFF_NORMED"; break;
-        }
-
-        // cv::imshow(methodName, img);
-        // cv::waitKey(0);
-    }
+    cv::Mat displayResult;
+    cv::normalize(result, displayResult, 0, 255, cv::NORM_MINMAX, -1, cv::Mat());
+    // cv::imshow("Matching Result", displayResult);
+    // cv::imshow("Detected Point", img);
+    // cv::waitKey(0);
+    if(matchLoc.x != 275) return 275-matchLoc.x;
+    else return 0;
 }
 // //Counts the number of valid readings from the laser bouncing off an object
 // unsigned int LaserProcessing::countObjectReadings()

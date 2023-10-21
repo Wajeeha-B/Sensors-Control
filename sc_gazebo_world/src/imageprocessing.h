@@ -35,8 +35,9 @@ public:
   /// @param [in] Image - laserScan to be processed
   ImageProcessing(sensor_msgs::Image image);
 
-  void TemplateMatch(void);
-  
+  // void TemplateMatch(void);
+  // void TemplateMatch2(void);
+  int TemplateMatch(void);
   /// @brief Counts the number of valid readings from the laser scanner
   /// @return The number of readings
   // unsigned int countObjectReadings();

@@ -305,17 +305,18 @@ void Sample::seperateThread() {
         // unsigned int i = laserProcessing.countObjectReadings();
         // ROS_INFO("Laser readings: %u", i);
 
-        imageProcessing.TemplateMatch();
+        turning = imageProcessing.TemplateMatch();
         laserProcessing.myFunction(myInt);
         
         geometry_msgs::Twist drive;
         if(running_){
-            drive.linear.x = 0.1; //sends it forward
+            drive.linear.x = 0.05; //sends it forward
             drive.linear.y = 0.0;
             drive.linear.z = 0.0;
             drive.angular.x = 0.0;
             drive.angular.y = 0.0;
-            drive.angular.z = 0.0;
+            if (turning != 0) drive.angular.z = turning*turningSens;
+            else drive.angular.z = 0.0;
         }
         else{
             drive.linear.x = 0.0; //sends it forward

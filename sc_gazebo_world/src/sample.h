@@ -176,6 +176,8 @@ private:
   //! Flag for whether the car is moving and the mission is active
   std::atomic<bool> running_; 
   int myInt = 0;
+  double turning = 0;
+  double turningSens = 0.001;
 //   //! Flag for is the goal is invalid
 //   std::atomic<bool> goalOK_;
 //   //! Flag for the toggle for using advanced goals
