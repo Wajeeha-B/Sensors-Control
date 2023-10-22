@@ -12,7 +12,7 @@ e.g. sc_gazebo_world
     catkin_make
 
 ## Launching the Simulation
-### Terminal 1:
+### Terminal 1 (Launching the Sim):
 ```
 roslaunch sc_gazebo_world main.launch
 ```
@@ -20,11 +20,21 @@ roslaunch sc_gazebo_world main.launch
 ```
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=robot2/cmd_vel
 ```
-### Terminal 3 (Rosservice call):
+### Terminal 3 (Running the code):
+```
+rosrun sc_gazebo_world sc_gazebo_world
+```
+### Terminal 4 (Rosservice call):
 ```
 rosservice call /mission "data: true"
 ```
-### Alternative to Terminal 1 (Open the bag):
+To stop the movement of the follower robot, set data to false.
+## Alternative to Launching the Simulation 
+### Terminal 1 (Opening RosCore):
+```
+roscore
+```
+### Terminal 2 (Open the bag):
 ```
 cd  catkin_ws/src/Sensors-Control/sc_gazebo_word/src/bag
 rosbag play -r 0.1 --clock -l Main_record.bag
@@ -35,7 +45,7 @@ rosbag play -r 0.1 --clock -l Main_record.bag
 cd  ~/catkin_ws/src/Sensors-Control/sc_gazebo_world/src/bag
 rosbag record /robot1/scan /robot2/imu -l 10
 ```
-### Reset the gazebo world (might not work)
+## Reset the gazebo world
 ```
 rosservice call /gazebo/reset_world "{}"
 ```
