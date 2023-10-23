@@ -36,7 +36,7 @@ roscore
 ```
 ### Terminal 2 (Open the bag):
 ```
-cd  catkin_ws/src/Sensors-Control/sc_gazebo_word/src/bag
+cd  catkin_ws/src/Sensors-Control/sc_gazebo_world/src/bag
 rosbag play -r 0.1 --clock -l Main_record.bag
 ```
 ### Recording a bag:
