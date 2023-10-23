@@ -15,7 +15,7 @@ using std::endl;
 //Default constructor of the sample class
 Sample::Sample(ros::NodeHandle nh) :
 //   nh_(nh),laserProcessingPtr_(nullptr), ackermanPtr_(nullptr), marker_counter_(0),
-  running_(false), 
+  running_(false), real_(false),
 //goalOK_(false), advGoals_(false)
     nh_(nh),laserProcessingPtr_(nullptr), imageProcessingPtr_(nullptr)
 {
@@ -36,6 +36,9 @@ Sample::Sample(ros::NodeHandle nh) :
     sub1_ = nh_.subscribe("/robot1/scan", 100, &Sample::laserCallback,this);
     sub2_ = nh_.subscribe("/robot1/camera/rgb/image_raw", 100, &Sample::imageCallback,this);
 
+    sub3_ = nh_.subscribe("/scan", 100, &Sample::laserCallback,this);
+    sub4_ = nh_.subscribe("/camera/rgb/image_raw", 100, &Sample::imageCallback,this);
+
     // //Publishing markers
     // pubVis_ = nh_.advertise<visualization_msgs::MarkerArray>("visualization_marker",3,false);
     // //Publishing brakes
@@ -49,10 +52,12 @@ Sample::Sample(ros::NodeHandle nh) :
 
     pubDrive_ = nh.advertise<geometry_msgs::Twist>("/robot1/cmd_vel",3,false);
 
+    pubRealDrive_ = nh.advertise<geometry_msgs::Twist>("/cmd_vel",3,false);
+
     //Service to enable the robot to start and stop from command line input
     service1_ = nh_.advertiseService("/mission", &Sample::request,this);
-    // //Service to toggle advanced goals from laser data
-    // service2_ = nh_.advertiseService("/toggle_advanced", &Sample::advanced,this);
+    //Service to toggle advanced goals from laser data
+    service2_ = nh_.advertiseService("/real", &Sample::real,this);
 
 }
 
@@ -193,7 +198,13 @@ void Sample::seperateThread() {
     //       robotPose_.orientation.x+
     //       robotPose_.orientation.y+
     //       robotPose_.orientation.z == 0.0);
-    while(laserData_.range_min+laserData_.range_max == 0.0 && imageData_.height+imageData_.width == 0.0);
+    while(laserData_.range_min+laserData_.range_max == 0.0 || imageData_.encoding[0] == 0);
+    // while(laserData_.range_min+laserData_.range_max == 0.0);
+    // while(imageData_.height+imageData_.width == 0);
+    // while(imageData_.encoding[0] == 0);
+    // ROS_INFO("laser: %f\nimage: %u\nencoding: %d", laserData_.range_min+laserData_.range_max, imageData_.height+imageData_.width,
+    // imageData_.encoding[0]);
+    
     //NEED TO WAIT FOR A DATA POINT TO BE POPULATED LIKE ABOVE
 
     //Limits the execution of this code to 5Hz
@@ -327,7 +338,8 @@ void Sample::seperateThread() {
             drive.angular.z = 0.0;
         }
 
-        pubDrive_.publish(drive);
+        if(!real_) pubDrive_.publish(drive);
+        else pubRealDrive_.publish(drive);
 
         //We have a rate timer, this sleep here is needed to ensure it stops and sleeps 
         //it will do it for the exact amount of time needed to run at 5Hz
@@ -370,26 +382,26 @@ bool Sample::request(std_srvs::SetBool::Request  &req,
     return true;
 }
 
-// //Service that handles toggling between advanced and basic goals, basic goals are on by default
-// bool Sample::advanced(std_srvs::SetBool::Request  &req,
-//              std_srvs::SetBool::Response &res)
-// {
-//     //if the data is set to true, advanced goals will be used and advGoals_ = true
-//     if(req.data)
-//     {
-//         ROS_INFO_STREAM("Requested: Advanced goals");
-//         res.success = true;
-//         res.message = "Switched to advanced goals";
-//         advGoals_ = true;
-//     }
-//     //otherwise basic goals is used, advGoals_ = false
-//     else
-//     {
-//         ROS_INFO_STREAM("Requested: Basic goals");
-//         res.success = true;
-//         res.message = "Switched to basic goals";
-//         advGoals_ = false;
-//     }
-//     //returns true every time since switching goals shouldn't be prevented for any obvious reason
-//     return true;
-// }
+//Service that handles toggling between advanced and basic goals, basic goals are on by default
+bool Sample::real(std_srvs::SetBool::Request  &req,
+             std_srvs::SetBool::Response &res)
+{
+    //if the data is set to true, advanced goals will be used and advGoals_ = true
+    if(req.data)
+    {
+        ROS_INFO_STREAM("Requested: Real topics");
+        res.success = true;
+        res.message = "Switched to real topics";
+        real_ = true;
+    }
+    //otherwise basic goals is used, advGoals_ = false
+    else
+    {
+        ROS_INFO_STREAM("Requested: Sim topics");
+        res.success = true;
+        res.message = "Switched to sim topics";
+        real_ = false;
+    }
+    //returns true every time since switching goals shouldn't be prevented for any obvious reason
+    return true;
+}

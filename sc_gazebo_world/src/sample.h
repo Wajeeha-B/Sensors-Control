@@ -86,8 +86,8 @@ public:
   /// @param [in] req the request, if true advanced goals is used, if false basic is used.
   /// @param [in] res the response, shares the current level goals being used.
   /// @return a boolean value to indicate the request was successful.
-//   bool advanced(std_srvs::SetBool::Request  &req,
-//                 std_srvs::SetBool::Response &res);
+  bool real(std_srvs::SetBool::Request  &req,
+            std_srvs::SetBool::Response &res);
 
 private:
 
@@ -127,16 +127,22 @@ private:
 
   ros::Publisher pubDrive_;
 
+  ros::Publisher pubRealDrive_;
+
   // PUBLISHERS CAN STAY THE SAME
   //! Robot odometry subscriber, uses OdomCallback
   ros::Subscriber sub1_;
   //! Laser scan subscriber, uses LaserCallback
   ros::Subscriber sub2_;
+  //! Robot odometry subscriber, uses OdomCallback
+  ros::Subscriber sub3_;
+  //! Laser scan subscriber, uses LaserCallback
+  ros::Subscriber sub4_;
 
   //! Mission service, starts and stops the mission
   ros::ServiceServer service1_;
-//   //! Advanced goals service, toggles between advanced and basic goals
-//   ros::ServiceServer service2_;
+  //! Advanced goals service, toggles between advanced and basic goals
+  ros::ServiceServer service2_;
 
   //! Pointer to Laser Object
 //   LaserProcessing* laserProcessingPtr_;
@@ -180,8 +186,8 @@ private:
   double turningSens = 0.001;
 //   //! Flag for is the goal is invalid
 //   std::atomic<bool> goalOK_;
-//   //! Flag for the toggle for using advanced goals
-//   std::atomic<bool> advGoals_;
+  //! Flag for the toggle for using advanced goals
+  std::atomic<bool> real_;
 //   //! The distance used to determined if a goal is reach and the next one can be used
 //   float STOP_DISTANCE_ = 0.5;
 };

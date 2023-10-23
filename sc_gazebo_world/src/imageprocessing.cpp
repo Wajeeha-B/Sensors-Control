@@ -177,7 +177,6 @@ int ImageProcessing::TemplateMatch(){
 
     assert(!img.empty() && "File could not be read, check with cv::imread()");
     memcpy(img.data, &image_.data[0], img.total() * img.elemSize());
-
     cv::Mat img2 = img.clone();
     //Starting from the username folder
     cv::Mat templateImg = cv::imread("catkin_ws/src/Sensors-Control/sc_gazebo_world/src/tag36_11_00000rqt.jpg", cv::IMREAD_COLOR);
