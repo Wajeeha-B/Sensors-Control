@@ -2,10 +2,9 @@
 #define IMAGEPROCESSING_H
 
 #include <sensor_msgs/Image.h>
-#include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/CameraInfo.h>
 // #include <geometry_msgs/Pose.h>
 #include <math.h>
-// #include "tf/transform_datatypes.h"
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -33,41 +32,19 @@ class ImageProcessing
 public:
   /// @brief Constructor for laser processing
   /// @param [in] Image - laserScan to be processed
-  ImageProcessing(sensor_msgs::Image image);
+  ImageProcessing(sensor_msgs::Image image, sensor_msgs::CameraInfo cameraInfo);
 
-  // void TemplateMatch(void);
-  // void TemplateMatch2(void);
   int TemplateMatch(void);
-  /// @brief Counts the number of valid readings from the laser scanner
-  /// @return The number of readings
-  // unsigned int countObjectReadings();
-
-  /// @brief Counts the number of segments of valid readings from the laser scanner
-  /// @return The number of segments that are cones
-  // unsigned int countSegments();
-
-  /// @brief Finds the midpoint between the two closest cones that are detected by the laser scanner
-  /// @return A geometry_msgs::Point variable with the x,y,z location of the midpoint
-  // geometry_msgs::Point detectRoadCentre();
-
-  /// @brief Checks if the predetermined goal is within the area between the two closest cones
-  /// @param [in] goal the predetermined goal of interest
-  /// @return a boolean value, true indicating the goal is between the cones
-  // bool GoalInCones(geometry_msgs::Point goal);
-
-  /// @brief Gets the cones store in cones_ and converts them from a vector pair to a vector of geometry_msgs::Point
-  /// @return std::vector<geometry_msgs::Point> of all cones detected
-  // std::vector<geometry_msgs::Point> getCones();
+  
+  double LocalAngle(int xPixel);
 
 private:
     //! Stores the laser scan data
     sensor_msgs::Image image_;
-    //! Defines the range to identify a cone in segment readings
-    // float CONE_RANGE_ = 0.3;
-    //! Stores a vector of cones as x and y coordinate pairs
-    // std::vector<std::pair<float, float>> cones_;
-    //! Stores the two closest cones
-    // geometry_msgs::Point cone1_, cone2_;
+    int width_;
+    int height_;
+    sensor_msgs::CameraInfo cameraInfo_;
+    double fovX_;
 };
 
 #endif // DETECTCABINET_H
