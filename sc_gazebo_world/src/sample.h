@@ -119,7 +119,7 @@ private:
   //! Flag for whether the car is moving and the mission is active
   std::atomic<bool> running_; 
   int myInt = 0;
-  double turning_ = 0;
+  double xPixel_ = 0;
   double turningSens_ = 0.001;
 
   //! Flag for the toggle for using advanced goals

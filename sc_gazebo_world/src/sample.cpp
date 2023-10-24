@@ -91,21 +91,21 @@ void Sample::seperateThread() {
         lck2.unlock();
         lck1.unlock();
 
-        turning_ = imageProcessing.TemplateMatch();
+        xPixel_ = imageProcessing.TemplateMatch();
         laserProcessing.myFunction(myInt);
 
-        double i;
-        i = imageProcessing.LocalAngle(turning_);
+        double angle;
+        angle = imageProcessing.LocalAngle(xPixel_);
 
         geometry_msgs::Twist drive;
         if(running_){
-            drive.linear.x = 0.05; //sends it forward
+            drive.linear.x = 0.1; //sends it forward
             drive.linear.y = 0.0;
             drive.linear.z = 0.0;
             drive.angular.x = 0.0;
             drive.angular.y = 0.0;
-            if (turning_ != 0) drive.angular.z = turning_*turningSens_;
-            // if (i > 0.001) drive.angular.z = i;
+            // if (turning_ != 0) drive.angular.z = turning_*turningSens_;
+            if (angle > 0.001 || angle < -0.001) drive.angular.z = angle;
             else drive.angular.z = 0.0;
         }
         else{
