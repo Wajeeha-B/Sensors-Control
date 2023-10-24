@@ -10,7 +10,8 @@
 // #include "visualization_msgs/MarkerArray.h"
 #include "std_srvs/SetBool.h"
 // #include "nav_msgs/Odometry.h"
-// #include "geometry_msgs/PoseArray.h"
+#include "geometry_msgs/Pose.h"
+#include "geometry_msgs/PoseArray.h"
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/CameraInfo.h"
 #include "sensor_msgs/LaserScan.h"
@@ -123,6 +124,8 @@ private:
 
   //! Flag for the toggle for using advanced goals
   std::atomic<bool> real_;
+
+  geometry_msgs::Pose Goal_;
 
 };
 

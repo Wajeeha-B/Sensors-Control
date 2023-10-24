@@ -53,9 +53,9 @@ int ImageProcessing::TemplateMatch(){
     // cv::imshow("Matching Result", displayResult);
     // cv::imshow("Detected Point", img);
     // cv::waitKey(0);
-    // if(matchLoc.x != 275) return 275-matchLoc.x;
-    // else return 0;
-    return matchLoc.x;
+    if(matchLoc.x != 275) return 275-matchLoc.x;
+    else return 0;
+    // return matchLoc.x;
 }
 
 double ImageProcessing::LocalAngle(int xPixel){
@@ -72,7 +72,7 @@ double ImageProcessing::LocalAngle(int xPixel){
     }
     xPixel = xPixel - 275; //Centres the value to 320 (assuming 275 is the middle)
     double d = (width_/2)/(tan(fovX_/2));
-    double theta = atan2(xPixel, d);
+    double theta = -atan2((double)xPixel, d);
     ROS_INFO("angle: %f", theta);
     return theta;
 }

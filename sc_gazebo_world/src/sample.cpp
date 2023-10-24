@@ -94,7 +94,7 @@ void Sample::seperateThread() {
         turning_ = imageProcessing.TemplateMatch();
         laserProcessing.myFunction(myInt);
 
-        int i;
+        double i;
         i = imageProcessing.LocalAngle(turning_);
 
         geometry_msgs::Twist drive;
@@ -105,6 +105,7 @@ void Sample::seperateThread() {
             drive.angular.x = 0.0;
             drive.angular.y = 0.0;
             if (turning_ != 0) drive.angular.z = turning_*turningSens_;
+            // if (i > 0.001) drive.angular.z = i;
             else drive.angular.z = 0.0;
         }
         else{
