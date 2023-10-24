@@ -36,6 +36,14 @@ public:
   /// @brief Counts the number of segments of valid readings from the laser scanner
   /// @return The number of segments that are cones
   unsigned int countSegments();
+  
+  /// @brief Takes in the angle of the laser pointer
+  /// @returns returns a distance, given the angle
+  double findDistance(double angle);
+
+  /// @brief Takes in the angle of the laser pointer
+  /// @returns returns a distance, given the angle
+  double findDistance(double angle);
 
   void myFunction(int myInt);
 

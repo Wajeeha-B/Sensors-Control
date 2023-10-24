@@ -22,6 +22,11 @@ unsigned int LaserProcessing::countObjectReadings()
     return count;
 }
 
+// I will need to add these to my .h file <JACINTA ADDF THESE> 
+double LaserProcessing::findDistance(double angle) {
+    laserScan_.
+}
+
 //Counts the number of segments of readings to indicate a single entity being detected, excludes the firetruck
 unsigned int LaserProcessing::countSegments()
 {
