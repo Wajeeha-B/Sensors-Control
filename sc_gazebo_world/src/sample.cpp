@@ -14,7 +14,7 @@ using std::endl;
 
 //Default constructor of the sample class
 Sample::Sample(ros::NodeHandle nh) :
-  nh_(nh), running_(false), real_(false),
+  nh_(nh), running_(false), real_(false), tooClose_(false),
   laserProcessingPtr_(nullptr), imageProcessingPtr_(nullptr)
 {
     sub1_ = nh_.subscribe("/robot1/scan", 100, &Sample::laserCallback,this);
@@ -24,6 +24,8 @@ Sample::Sample(ros::NodeHandle nh) :
     sub4_ = nh_.subscribe("/camera/rgb/image_raw", 100, &Sample::imageCallback,this);
     
     sub5_ = nh_.subscribe("/robot1/camera/rgb/camera_info", 10, &Sample::cameraInfoCallback,this);
+    //Subscribing to odometry of the robot
+    sub6_ = nh_.subscribe("/robot1/odom", 100, &Sample::odomCallback,this);
 
     pubDrive_ = nh.advertise<geometry_msgs::Twist>("/robot1/cmd_vel",3,false);
 
@@ -34,6 +36,19 @@ Sample::Sample(ros::NodeHandle nh) :
     //Service to toggle advanced goals from laser data
     service2_ = nh_.advertiseService("/real", &Sample::real,this);
 
+    //Sets the default robotPose_ to 0
+    robotPose_.position.x = 0.0;
+    robotPose_.position.y = 0.0;
+    robotPose_.position.z = 0.0;
+    robotPose_.orientation.x = 0.0;
+    robotPose_.orientation.y = 0.0;
+    robotPose_.orientation.z = 0.0;
+    robotPose_.orientation.w = 0.0;
+
+    //Sets the default goal to (0,0)
+    goal_.x = 0.0;
+    goal_.y = 0.0;
+    goal_.z = 0.0;
 }
 
 // We delete anything that needs removing here specifically
@@ -64,10 +79,20 @@ void Sample::cameraInfoCallback(const sensor_msgs::CameraInfoConstPtr& msg)
     cameraInfoData_ = *msg; // We store a copy of the LaserScan in laserData_
 }
 
-//The main thread for processing data and publishing the markers and car controls
+// A callback for odometry
+void Sample::odomCallback(const nav_msgs::OdometryConstPtr &msg)
+{
+    geometry_msgs::Pose pose = msg->pose.pose;
+    std::unique_lock<std::mutex> lck(robotPoseMtx_); // Locks the data for the robotPose to be saved
+    robotPose_ = pose; // We copy the pose here
+}
+
+//The main thread for processing data and publishing the markers and robot controls
 void Sample::seperateThread() {
 
-    while(laserData_.range_min+laserData_.range_max == 0.0 || imageData_.encoding[0] == 0);
+    while(laserData_.range_min+laserData_.range_max == 0.0 || imageData_.encoding[0] == 0 ||
+          robotPose_.orientation.w+robotPose_.orientation.x+
+          robotPose_.orientation.y+robotPose_.orientation.z == 0.0);
 
     // ROS_INFO("laser: %f\nimage: %u\nencoding: %d", laserData_.range_min+laserData_.range_max, imageData_.height+imageData_.width,
     // imageData_.encoding[0]);
@@ -78,27 +103,60 @@ void Sample::seperateThread() {
     ros::Rate rate_limiter(5.0);
     while (ros::ok()) {
 
-        // //Locks all of the data with mutexes
+        //Locks all of the data with mutexes
         std::unique_lock<std::mutex> lck1 (laserDataMtx_);
         std::unique_lock<std::mutex> lck2 (imageDataMtx_);
         std::unique_lock<std::mutex> lck3 (cameraInfoDataMtx_);
+        std::unique_lock<std::mutex> lck4 (robotPoseMtx_);
         
         LaserProcessing laserProcessing(laserData_);
         ImageProcessing imageProcessing(imageData_, cameraInfoData_);
 
         //Unlocks all mutexes
+        lck4.unlock();
         lck3.unlock();
         lck2.unlock();
         lck1.unlock();
 
-        xPixel_ = imageProcessing.TemplateMatch();
+        int xPixel;
+        xPixel = imageProcessing.TemplateMatch();
         laserProcessing.myFunction(myInt);
 
         double angle;
-        angle = imageProcessing.LocalAngle(xPixel_);
+        angle = imageProcessing.LocalAngle(xPixel);
+        
+        // double dist;
+        // dist = laserProcessing.FindDist(angle);
+        
+        // if(dist < STOP_DISTANCE_) tooClose_ = true;
+        // else tooClose_ = false;
+
+        // geometry_msgs::Point localGoal_;
+        // localGoal_.x = dist*cos(angle);
+        // localGoal_.y = dist*sin(angle);
+        // localGoal_.z = 0;
+        
+        // ROS_INFO("Robot pose: [%f,%f,%f]", robotPose_.position.x, robotPose_.position.y, robotPose_.position.z);
+        // goal_ = local2Global(localGoal_, robotPose_);
+        // goals_.push_back(goal_);
+
+        //If there are any goals stored, feed the first element into the goal_ variable
+        double steering = 0;
+        if(goals_.size() > 0)
+        {
+            geometry_msgs::Point currentGoal;
+            currentGoal.x = goals_.front().x;
+            currentGoal.y = goals_.front().y;
+            currentGoal.z = goals_.front().z;
+            
+            //If the distance to the goal is less than the stopping distance then the first element of the goal
+            //is erased making the second goal is moved into the first element of the array.
+            if(DistanceToGoal(currentGoal, robotPose_) < STOP_DISTANCE_) goals_.erase(goals_.begin());
+            steering = GetSteering(currentGoal, robotPose_);
+        }
 
         geometry_msgs::Twist drive;
-        if(running_){
+        if(running_ && !tooClose_){
             drive.linear.x = 0.1; //sends it forward
             drive.linear.y = 0.0;
             drive.linear.z = 0.0;
@@ -107,6 +165,7 @@ void Sample::seperateThread() {
             // if (turning_ != 0) drive.angular.z = turning_*turningSens_;
             if (angle > 0.001 || angle < -0.001) drive.angular.z = angle;
             else drive.angular.z = 0.0;
+            // drive.angular.z = steering;
         }
         else{
             drive.linear.x = 0.0;
@@ -136,7 +195,7 @@ bool Sample::request(std_srvs::SetBool::Request  &req,
     if(req.data)
     {
         ROS_INFO_STREAM("Requested: Start mission");
-        running_ = true; //start the car if there is a goal
+        running_ = true; //start the robot if there is a goal
         res.success = true;
         res.message = "The Turtlebot has started it's mission";
 
@@ -175,4 +234,32 @@ bool Sample::real(std_srvs::SetBool::Request  &req,
     }
     //returns true every time since switching goals shouldn't be prevented for any obvious reason
     return true;
+}
+
+geometry_msgs::Point Sample::local2Global(geometry_msgs::Point goal, geometry_msgs::Pose robot)
+{
+    geometry_msgs::Point p;
+    //transforms the location to a global reference accounting for the offset of the robot's location relative to the laser sensor's location
+    p.x = (goal.x * cos(tf::getYaw(robot.orientation)) - goal.y * sin(tf::getYaw(robot.orientation))) + robot.position.x +SENSOR_OFFSET_*cos(tf::getYaw(robot.orientation));
+    p.y = (goal.x * sin(tf::getYaw(robot.orientation)) + goal.y * cos(tf::getYaw(robot.orientation))) + robot.position.y +SENSOR_OFFSET_*sin(tf::getYaw(robot.orientation));
+    return p;
+}
+
+double Sample::DistanceToGoal(geometry_msgs::Point goal, geometry_msgs::Pose robot)
+{
+    //finds the difference in x and y and get the hypotenuse between the two points
+    double dist = sqrt(pow(goal.x-robot.position.x,2)+pow(goal.y-robot.position.y,2));
+    return dist;
+}
+
+double Sample::GetSteering(geometry_msgs::Point goal, geometry_msgs::Pose robot)
+{
+    /*-----Chord Length-----*/
+    double dx = goal.x-robot.position.x;    //difference in x between the robot's current position and the goal
+    double dy = goal.y-robot.position.y;    //difference in y between the robot's current position and the goal
+    double CL = sqrt(pow(dx,2)+pow(dy,2));  //Chord length is hypotenuse of perpendicular lengths of dx and dy
+
+    /*-----Alpha Angle-----*/
+    double AA = atan2(dy, dx)-tf::getYaw(robot.orientation);  //Alpha angle made with angle formed from chord from the yaw angle of the robot
+    return AA;
 }

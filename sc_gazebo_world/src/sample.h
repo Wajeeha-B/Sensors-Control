@@ -9,7 +9,8 @@
 // #include "std_msgs/Float64.h"
 // #include "visualization_msgs/MarkerArray.h"
 #include "std_srvs/SetBool.h"
-// #include "nav_msgs/Odometry.h"
+#include "nav_msgs/Odometry.h"
+#include "tf/transform_datatypes.h"
 #include "geometry_msgs/Pose.h"
 #include "geometry_msgs/PoseArray.h"
 #include "sensor_msgs/Image.h"
@@ -72,11 +73,16 @@ public:
   bool real(std_srvs::SetBool::Request  &req,
             std_srvs::SetBool::Response &res);
 
+  geometry_msgs::Point local2Global(geometry_msgs::Point goal, geometry_msgs::Pose robot);
+  double DistanceToGoal(geometry_msgs::Point goal, geometry_msgs::Pose robot);
+  double GetSteering(geometry_msgs::Point goal, geometry_msgs::Pose robot);
+
 private:
   
   void laserCallback(const sensor_msgs::LaserScanConstPtr& msg);
   void imageCallback(const sensor_msgs::ImageConstPtr& msg);
   void cameraInfoCallback(const sensor_msgs::CameraInfoConstPtr& msg);
+  void odomCallback(const nav_msgs::OdometryConstPtr& msg);
 
   //! Node handle for communication
   ros::NodeHandle nh_;
@@ -97,6 +103,8 @@ private:
 
   ros::Subscriber sub5_;
 
+  ros::Subscriber sub6_;
+
   //! Mission service, starts and stops the mission
   ros::ServiceServer service1_;
   //! Advanced goals service, toggles between advanced and basic goals
@@ -116,17 +124,25 @@ private:
   sensor_msgs::CameraInfo cameraInfoData_;
   std::mutex cameraInfoDataMtx_;
 
+  //! Stores the position and orientation of the robot
+  geometry_msgs::Pose robotPose_;
+  //! Mutex to lock robotPose_
+  std::mutex robotPoseMtx_;
+
   //! Flag for whether the car is moving and the mission is active
   std::atomic<bool> running_; 
   int myInt = 0;
-  double xPixel_ = 0;
+  double turning_ = 0;
   double turningSens_ = 0.001;
 
   //! Flag for the toggle for using advanced goals
   std::atomic<bool> real_;
 
-  geometry_msgs::Pose Goal_;
-
+  geometry_msgs::Point goal_;
+  std::vector<geometry_msgs::Point> goals_;
+  double SENSOR_OFFSET_ = 0.12; //estimate
+  double STOP_DISTANCE_ = 0.1;
+  bool tooClose_;
 };
 
 #endif // SAMPLE_H
