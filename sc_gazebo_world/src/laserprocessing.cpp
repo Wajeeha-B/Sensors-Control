@@ -22,10 +22,26 @@ unsigned int LaserProcessing::countObjectReadings()
     return count;
 }
 
+bool calculateTurn(double distance, double angle) {
+    return true;
+};
+
+double calculateMagnitude(double distance, double angle) {
+    return 0;
+};
+
 // I will need to add these to my .h file <JACINTA ADDF THESE> 
 double LaserProcessing::findDistance(double angle) {
-    laserScan_.
-}
+    unsigned int count = 0;
+    //Increments the count variable if the reading is within the max and min range of the laser
+    for (int i = 0; i<laserScan_.ranges.size(); i++){
+        if(laserScan_.ranges.at(i)>laserScan_.range_min &&
+           laserScan_.ranges.at(i)<laserScan_.range_max){
+            count++;
+           }
+    }
+    return count;
+};
 
 //Counts the number of segments of readings to indicate a single entity being detected, excludes the firetruck
 unsigned int LaserProcessing::countSegments()
