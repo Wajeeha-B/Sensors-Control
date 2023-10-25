@@ -22,12 +22,28 @@ unsigned int LaserProcessing::countObjectReadings()
     return count;
 }
 
-bool calculateTurn(double distance, double angle) {
-    return true;
+unsigned int calculateTurn(double angle) {
+    // If angle is 0-180, return false outcome (object on right and in front)
+    if (angle <= 90){
+        return 2;
+    }
+
+    // If angle is 270-360 deg, return true outcome (object on left and in front)
+    if (angle > 270){
+        return 0;
+    }
+    // If object behind robot do nothing
+    else {
+        return 1;
+    }
 };
 
-double calculateMagnitude(double distance, double angle) {
-    return 0;
+double calculateMagnitude(double angle) {
+    //Convert 0-90 to scale 0-100
+    //NewScale = (((OldValue - OldMin)*(NewMax-NewMin)/(OldMax-OldMin))+NewMin
+    unsigned int NewScale = (((angle)*(100))/(90));
+    //Invert scale for magnitude of turn
+    return 100-NewScale; 
 };
 
 // I will need to add these to my .h file <JACINTA ADDF THESE> 

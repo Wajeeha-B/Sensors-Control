@@ -41,8 +41,8 @@ public:
   double findDistance(double angle);
 
   /// @brief Takes in an angle and a distance and returns true or false
-  /// @returns returns True = left, false = right
-  bool calculateTurn(double distance, double angle);
+  /// @returns returns 0 = left, 1 = do nothing, 2 = right
+  unsigned int calculateTurn(double angle);
 
   /// @brief Takes in an angle and a distance
   /// @returns returns magnitude of the turn as a double with a range of 0-360
