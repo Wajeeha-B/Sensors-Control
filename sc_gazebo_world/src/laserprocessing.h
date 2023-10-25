@@ -46,7 +46,7 @@ public:
 
   /// @brief Takes in an angle and a distance
   /// @returns returns magnitude of the turn as a double with a range of 0-360
-  bool calculateMagnitude(double distance, double angle);
+  double calculateMagnitude(double angle);
 
   void myFunction(int myInt);
 

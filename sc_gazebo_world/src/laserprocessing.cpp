@@ -22,7 +22,7 @@ unsigned int LaserProcessing::countObjectReadings()
     return count;
 }
 
-unsigned int calculateTurn(double angle) {
+unsigned int LaserProcessing::calculateTurn(double angle) {
     // If angle is 0-180, return false outcome (object on right and in front)
     if (angle <= 90){
         return 2;
@@ -38,7 +38,7 @@ unsigned int calculateTurn(double angle) {
     }
 };
 
-double calculateMagnitude(double angle) {
+double LaserProcessing::calculateMagnitude(double angle) {
     //Convert 0-90 to scale 0-100
     //NewScale = (((OldValue - OldMin)*(NewMax-NewMin)/(OldMax-OldMin))+NewMin
     unsigned int NewScale = (((angle)*(100))/(90));
