@@ -46,7 +46,12 @@ double LaserProcessing::calculateMagnitude(double angle) {
     return 100-NewScale; 
 };
 
-
+// The provided code attempts to estimate the distance at a specific angle by interpolating 
+// between the two closest angles for which data is available. If the target angle is within 0.5 degrees 
+// of one of the measured angles, the interpolation should provide a reasonable estimate of the distance 
+// at the target angle. However, if the surrounding angles are significantly further away from the target 
+// angle, the accuracy of the interpolation may degrade, especially in 
+// environments with complex or rapidly-changing geometry.
 double LaserProcessing::findDistance(double targetAngle) {
 
     // Calculate the index corresponding to the target angle
