@@ -46,17 +46,17 @@ double LaserProcessing::calculateMagnitude(double angle) {
     return 100-NewScale; 
 };
 
+// index through an array to find a target angle and corresponding distance
+
 // I will need to add these to my .h file <JACINTA ADDF THESE> 
-double LaserProcessing::findDistance(double angle) {
-    unsigned int count = 0;
-    //Increments the count variable if the reading is within the max and min range of the laser
-    for (int i = 0; i<laserScan_.ranges.size(); i++){
-        if(laserScan_.ranges.at(i)>laserScan_.range_min &&
-           laserScan_.ranges.at(i)<laserScan_.range_max){
-            count++;
-           }
+double LaserProcessing::findDistance(double targetAngle) {
+    for (int i = 0; i < laserScan_.ranges.size(); i++) {
+        unsigned int angleRes = laserScan_.angle_min + laserScan_.angle_increment;
+        if (laserScan_.intensities(i) == targetAngle) {
+            return i; // Return the index where the angle was found
+        }
     }
-    return count;
+    return -1; // Return -1 if the angle was not found
 };
 
 //Counts the number of segments of readings to indicate a single entity being detected, excludes the firetruck
