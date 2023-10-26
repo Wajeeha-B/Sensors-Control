@@ -46,19 +46,29 @@ double LaserProcessing::calculateMagnitude(double angle) {
     return 100-NewScale; 
 };
 
-// index through an array to find a target angle and corresponding distance
-// Loop through all the ranges
-// Check to see if the range corrosponding in this array is within our target angle or 0.5 degrees
-// if it isn't move onto the next range
-// if it is, return
+
 double LaserProcessing::findDistance(double targetAngle) {
-    for (int i = 0; i < laserScan_.ranges.size(); i++) {
-        unsigned int angleRes = laserScan_.angle_min + laserScan_.angle_increment;
-        if (laserScan_.intensities.at(i) == targetAngle) {
-            return i; // Return the index where the angle was found
-        }
+
+    // Calculate the index corresponding to the target angle
+    int index = (targetAngle - laserScan_.angle_min) / laserScan_.angle_increment;
+
+    // Calculate the float index corresponding to the target angle
+    float floatIndex = (targetAngle - laserScan_.angle_min) / laserScan_.angle_increment;
+
+    // Get the indices of the surrounding angles
+    int lowerIndex = static_cast<int>(floor(floatIndex));
+    int upperIndex = static_cast<int>(ceil(floatIndex));
+
+    // Check if the indices are within the bounds of the ranges array
+    if (lowerIndex >= 0 && upperIndex < laserScan_.ranges.size()) {
+        // Linearly interpolate the distance at the target angle
+        float alpha = floatIndex - lowerIndex;
+        double interpolatedDistance = (1.0 - alpha) * laserScan_.ranges[lowerIndex] + alpha * laserScan_.ranges[upperIndex];
+        return interpolatedDistance;
     }
-    return -1; // Return -1 if the angle was not found
+
+    // Return -1 if the angle is out of bounds
+    return -1; 
 };
 
 //Counts the number of segments of readings to indicate a single entity being detected, excludes the firetruck
