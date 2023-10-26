@@ -47,12 +47,14 @@ double LaserProcessing::calculateMagnitude(double angle) {
 };
 
 // index through an array to find a target angle and corresponding distance
-
-// I will need to add these to my .h file <JACINTA ADDF THESE> 
+// Loop through all the ranges
+// Check to see if the range corrosponding in this array is within our target angle or 0.5 degrees
+// if it isn't move onto the next range
+// if it is, return
 double LaserProcessing::findDistance(double targetAngle) {
     for (int i = 0; i < laserScan_.ranges.size(); i++) {
         unsigned int angleRes = laserScan_.angle_min + laserScan_.angle_increment;
-        if (laserScan_.intensities(i) == targetAngle) {
+        if (laserScan_.intensities.at(i) == targetAngle) {
             return i; // Return the index where the angle was found
         }
     }
