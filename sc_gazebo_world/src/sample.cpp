@@ -124,30 +124,30 @@ void Sample::seperateThread() {
 
         double angle;
         angle = imageProcessing.LocalAngle(xPixel);
-        // ROS_INFO("angle: %f", angle);
+        ROS_INFO("angle: %f", angle);
 
         // ROS_INFO("AngleMin= %f\n AngleMax= %f\n AngleIncrement= %f", laserData_.angle_min, laserData_.angle_max, laserData_.angle_increment);
         
         
         double dist;
         dist = laserProcessing.FindDistance(angle);
-        // ROS_INFO("Distance: %f", dist);
+        ROS_INFO("Distance: %f", dist);
 
         if(dist < STOP_DISTANCE_ || dist > 2147483647) tooClose_ = true;
         else tooClose_ = false;
 
-        geometry_msgs::Point localGoal_;
-        localGoal_.x = dist*cos(angle);
-        localGoal_.y = dist*sin(angle);
-        localGoal_.z = 0;
-        // ROS_INFO("Local Goal: [%f, %f, %f]", localGoal_.x, localGoal_.y, localGoal_.z);
+        // geometry_msgs::Point localGoal_;
+        // localGoal_.x = dist*cos(angle);
+        // localGoal_.y = dist*sin(angle);
+        // localGoal_.z = 0;
+        // // ROS_INFO("Local Goal: [%f, %f, %f]", localGoal_.x, localGoal_.y, localGoal_.z);
         
-        // ROS_INFO("Robot pose: [%f,%f,%f]", robotPose_.position.x, robotPose_.position.y, robotPose_.position.z);
-        goal_ = local2Global(localGoal_, robotPose_);
-        // ROS_INFO("Global Goal: [%f, %f, %f]", goal_.x, goal_.y, goal_.z);
+        // // ROS_INFO("Robot pose: [%f,%f,%f]", robotPose_.position.x, robotPose_.position.y, robotPose_.position.z);
+        // goal_ = local2Global(localGoal_, robotPose_);
+        // // ROS_INFO("Global Goal: [%f, %f, %f]", goal_.x, goal_.y, goal_.z);
 
-        double steering = 0;
-        steering = GetSteering(goal_, robotPose_);
+        // double steering = 0;
+        // steering = GetSteering(goal_, robotPose_);
         // ROS_INFO("steering: %f", steering);
 
 

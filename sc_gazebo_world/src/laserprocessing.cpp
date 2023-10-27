@@ -72,7 +72,8 @@ double LaserProcessing::FindDistance(double targetAngle){
     }
 
     // Return -1 if the angle is out of bounds
-    return -1; 
+    if (index < 0) index = index+360;
+    return laserScan_.ranges[index]; 
 };
 
 //Counts the number of segments of readings to indicate a single entity being detected, excludes the firetruck
