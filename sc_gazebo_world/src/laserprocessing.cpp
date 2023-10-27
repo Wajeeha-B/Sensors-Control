@@ -81,7 +81,7 @@ double LaserProcessing::FindDistance(double targetAngle, int method) {
         // ROS_INFO("index: %d", index);
         double dist;
         dist = laserScan_.ranges[index];
-        ROS_INFO("distance readings: [%f,%f,%f,%f]", laserScan_.ranges[0], laserScan_.ranges[90], laserScan_.ranges[180], laserScan_.ranges[270]);
+        // ROS_INFO("distance readings: [%f,%f,%f,%f]", laserScan_.ranges[0], laserScan_.ranges[90], laserScan_.ranges[180], laserScan_.ranges[270]);
         return dist;
     }
     return 0;

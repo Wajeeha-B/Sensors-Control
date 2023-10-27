@@ -126,7 +126,7 @@ void Sample::seperateThread() {
         angle = imageProcessing.LocalAngle(xPixel);
         // ROS_INFO("angle: %f", angle);
 
-        ROS_INFO("AngleMin= %f\n AngleMax= %f\n AngleIncrement= %f", laserData_.angle_min, laserData_.angle_max, laserData_.angle_increment);
+        // ROS_INFO("AngleMin= %f\n AngleMax= %f\n AngleIncrement= %f", laserData_.angle_min, laserData_.angle_max, laserData_.angle_increment);
         
         
         double dist;
@@ -140,10 +140,21 @@ void Sample::seperateThread() {
         localGoal_.x = dist*cos(angle);
         localGoal_.y = dist*sin(angle);
         localGoal_.z = 0;
+        // ROS_INFO("Local Goal: [%f, %f, %f]", localGoal_.x, localGoal_.y, localGoal_.z);
         
         // ROS_INFO("Robot pose: [%f,%f,%f]", robotPose_.position.x, robotPose_.position.y, robotPose_.position.z);
         goal_ = local2Global(localGoal_, robotPose_);
-        goals_.push_back(goal_);
+        // ROS_INFO("Global Goal: [%f, %f, %f]", goal_.x, goal_.y, goal_.z);
+
+        // double steering = 0;
+        // steering = GetSteering(goal_, robotPose_);
+        // ROS_INFO("steering: %f", steering);
+
+
+        if(goals_.size() == 0) goals_.push_back(goal_);
+        else if(DistanceBetweenGoals(goal_, goals_.back()) > STOP_DISTANCE_) goals_.push_back(goal_);
+        // ROS_INFO("distance between goals: %f", DistanceBetweenGoals(goal_, goals_.back()));
+        // ROS_INFO("goal size: %ld", goals_.size());
 
         //If there are any goals stored, feed the first element into the goal_ variable
         double steering = 0;
@@ -158,6 +169,7 @@ void Sample::seperateThread() {
             //is erased making the second goal is moved into the first element of the array.
             if(DistanceToGoal(currentGoal, robotPose_) < STOP_DISTANCE_) goals_.erase(goals_.begin());
             steering = GetSteering(currentGoal, robotPose_);
+            // ROS_INFO("steering: %f", steering);
         }
 
         geometry_msgs::Twist drive;
@@ -170,7 +182,7 @@ void Sample::seperateThread() {
             // if (turning_ != 0) drive.angular.z = turning_*turningSens_;
             // if (angle > 0.001 || angle < -0.001) drive.angular.z = angle;
             // else drive.angular.z = 0.0;
-            drive.angular.z = steering;
+            drive.angular.z = steering*turningSens_;
         }
         else{
             drive.linear.x = 0.0;
@@ -254,6 +266,11 @@ double Sample::DistanceToGoal(geometry_msgs::Point goal, geometry_msgs::Pose rob
 {
     //finds the difference in x and y and get the hypotenuse between the two points
     double dist = sqrt(pow(goal.x-robot.position.x,2)+pow(goal.y-robot.position.y,2));
+    return dist;
+}
+
+double Sample::DistanceBetweenGoals(geometry_msgs::Point goal1, geometry_msgs::Point goal2){
+    double dist = sqrt(pow(goal1.x-goal2.x,2)+pow(goal1.y-goal2.y,2));
     return dist;
 }
 

@@ -75,6 +75,7 @@ public:
 
   geometry_msgs::Point local2Global(geometry_msgs::Point goal, geometry_msgs::Pose robot);
   double DistanceToGoal(geometry_msgs::Point goal, geometry_msgs::Pose robot);
+  double DistanceBetweenGoals(geometry_msgs::Point goal1, geometry_msgs::Point goal2);
   double GetSteering(geometry_msgs::Point goal, geometry_msgs::Pose robot);
 
 private:
@@ -133,7 +134,7 @@ private:
   std::atomic<bool> running_; 
   int myInt = 0;
   double turning_ = 0;
-  double turningSens_ = 0.001;
+  double turningSens_ = 0.5;
 
   //! Flag for the toggle for using advanced goals
   std::atomic<bool> real_;
