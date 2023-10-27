@@ -134,7 +134,7 @@ private:
   std::atomic<bool> running_; 
   int myInt = 0;
   double turning_ = 0;
-  double turningSens_ = 0.5;
+  double turningSens_ = 1;
 
   //! Flag for the toggle for using advanced goals
   std::atomic<bool> real_;
@@ -143,6 +143,7 @@ private:
   std::vector<geometry_msgs::Point> goals_;
   double SENSOR_OFFSET_ = 0.12; //estimate
   double STOP_DISTANCE_ = 0.3;
+  // double GOAL_DISTANCE_ = 0.1;
   bool tooClose_;
 };
 

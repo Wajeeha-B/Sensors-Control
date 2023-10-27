@@ -130,7 +130,7 @@ void Sample::seperateThread() {
         
         
         double dist;
-        dist = laserProcessing.FindDistance(angle, 1);
+        dist = laserProcessing.FindDistance(angle);
         // ROS_INFO("Distance: %f", dist);
 
         if(dist < STOP_DISTANCE_ || dist > 2147483647) tooClose_ = true;
@@ -146,31 +146,31 @@ void Sample::seperateThread() {
         goal_ = local2Global(localGoal_, robotPose_);
         // ROS_INFO("Global Goal: [%f, %f, %f]", goal_.x, goal_.y, goal_.z);
 
-        // double steering = 0;
-        // steering = GetSteering(goal_, robotPose_);
+        double steering = 0;
+        steering = GetSteering(goal_, robotPose_);
         // ROS_INFO("steering: %f", steering);
 
 
-        if(goals_.size() == 0) goals_.push_back(goal_);
-        else if(DistanceBetweenGoals(goal_, goals_.back()) > STOP_DISTANCE_) goals_.push_back(goal_);
+        // if(goals_.size() == 0) goals_.push_back(goal_);
+        // else if(DistanceBetweenGoals(goal_, goals_.back()) > GOAL_DISTANCE_) goals_.push_back(goal_);
         // ROS_INFO("distance between goals: %f", DistanceBetweenGoals(goal_, goals_.back()));
         // ROS_INFO("goal size: %ld", goals_.size());
 
         //If there are any goals stored, feed the first element into the goal_ variable
-        double steering = 0;
-        if(goals_.size() > 0)
-        {
-            geometry_msgs::Point currentGoal;
-            currentGoal.x = goals_.front().x;
-            currentGoal.y = goals_.front().y;
-            currentGoal.z = goals_.front().z;
+        // double steering = 0;
+        // if(goals_.size() > 0)
+        // {
+        //     geometry_msgs::Point currentGoal;
+        //     currentGoal.x = goals_.front().x;
+        //     currentGoal.y = goals_.front().y;
+        //     currentGoal.z = goals_.front().z;
             
-            //If the distance to the goal is less than the stopping distance then the first element of the goal
-            //is erased making the second goal is moved into the first element of the array.
-            if(DistanceToGoal(currentGoal, robotPose_) < STOP_DISTANCE_) goals_.erase(goals_.begin());
-            steering = GetSteering(currentGoal, robotPose_);
-            // ROS_INFO("steering: %f", steering);
-        }
+        //     //If the distance to the goal is less than the stopping distance then the first element of the goal
+        //     //is erased making the second goal is moved into the first element of the array.
+        //     if(DistanceToGoal(currentGoal, robotPose_) < STOP_DISTANCE_) goals_.erase(goals_.begin());
+        //     steering = GetSteering(currentGoal, robotPose_);
+        //     // ROS_INFO("steering: %f", steering);
+        // }
 
         geometry_msgs::Twist drive;
         if(running_ && !tooClose_){
@@ -180,9 +180,9 @@ void Sample::seperateThread() {
             drive.angular.x = 0.0;
             drive.angular.y = 0.0;
             // if (turning_ != 0) drive.angular.z = turning_*turningSens_;
-            // if (angle > 0.001 || angle < -0.001) drive.angular.z = angle;
-            // else drive.angular.z = 0.0;
-            drive.angular.z = steering*turningSens_;
+            if (angle > 0.001 || angle < -0.001) drive.angular.z = angle;
+            else drive.angular.z = 0.0;
+            // drive.angular.z = steering*turningSens_;
         }
         else{
             drive.linear.x = 0.0;

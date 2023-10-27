@@ -38,7 +38,7 @@ public:
 
   /// @brief Takes in the angle of the laser pointer
   /// @returns returns a distance, given the angle
-  double FindDistance(double angle, int method);
+  double FindDistance(double angle);
 
   /// @brief Takes in an angle and a distance and returns true or false
   /// @returns returns 0 = left, 1 = do nothing, 2 = right
