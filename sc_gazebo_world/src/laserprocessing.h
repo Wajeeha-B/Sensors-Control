@@ -2,11 +2,10 @@
 #define LASERPROCESSING_H
 
 #include <sensor_msgs/LaserScan.h>
-// #include <geometry_msgs/Pose.h>
 #include <math.h>
-// #include "tf/transform_datatypes.h"
 #include <iostream>
 #include "ros/ros.h"
+#include <geometry_msgs/Twist.h>
 
 /*!
  *  \brief     Laser Processing Class
@@ -36,6 +35,18 @@ public:
   /// @brief Counts the number of segments of valid readings from the laser scanner
   /// @return The number of segments that are cones
   unsigned int countSegments();
+
+  /// @brief Takes in the angle of the laser pointer
+  /// @returns returns a distance, given the angle
+  double findDistance(double angle);
+
+  /// @brief Takes in an angle and a distance and returns true or false
+  /// @returns returns 0 = left, 1 = do nothing, 2 = right
+  unsigned int calculateTurn(double angle);
+
+  /// @brief Takes in an angle and a distance
+  /// @returns returns magnitude of the turn as a double with a range of 0-360
+  double calculateMagnitude(double angle);
 
   void myFunction(int myInt);
 
