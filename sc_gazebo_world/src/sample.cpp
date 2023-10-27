@@ -125,6 +125,9 @@ void Sample::seperateThread() {
         double angle;
         angle = imageProcessing.LocalAngle(xPixel);
         // ROS_INFO("angle: %f", angle);
+
+        ROS_INFO("AngleMin= %f\n AngleMax= %f\n AngleIncrement= %f", laserData_.angle_min, laserData_.angle_max, laserData_.angle_increment);
+        
         
         double dist;
         dist = laserProcessing.FindDistance(angle, 1);
