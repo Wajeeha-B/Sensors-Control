@@ -141,7 +141,7 @@ private:
   geometry_msgs::Point goal_;
   std::vector<geometry_msgs::Point> goals_;
   double SENSOR_OFFSET_ = 0.12; //estimate
-  double STOP_DISTANCE_ = 0.1;
+  double STOP_DISTANCE_ = 0.3;
   bool tooClose_;
 };
 

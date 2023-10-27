@@ -52,28 +52,39 @@ double LaserProcessing::calculateMagnitude(double angle) {
 // at the target angle. However, if the surrounding angles are significantly further away from the target 
 // angle, the accuracy of the interpolation may degrade, especially in 
 // environments with complex or rapidly-changing geometry.
-double LaserProcessing::findDistance(double targetAngle) {
+double LaserProcessing::FindDistance(double targetAngle, int method) {
+    if (method = 0){
+        // Calculate the index corresponding to the target angle
+        int index = (targetAngle - laserScan_.angle_min) / laserScan_.angle_increment;
 
-    // Calculate the index corresponding to the target angle
-    int index = (targetAngle - laserScan_.angle_min) / laserScan_.angle_increment;
+        // Calculate the float index corresponding to the target angle
+        float floatIndex = (targetAngle - laserScan_.angle_min) / laserScan_.angle_increment;
 
-    // Calculate the float index corresponding to the target angle
-    float floatIndex = (targetAngle - laserScan_.angle_min) / laserScan_.angle_increment;
+        // Get the indices of the surrounding angles
+        int lowerIndex = static_cast<int>(floor(floatIndex));
+        int upperIndex = static_cast<int>(ceil(floatIndex));
 
-    // Get the indices of the surrounding angles
-    int lowerIndex = static_cast<int>(floor(floatIndex));
-    int upperIndex = static_cast<int>(ceil(floatIndex));
+        // Check if the indices are within the bounds of the ranges array
+        if (lowerIndex >= 0 && upperIndex < laserScan_.ranges.size()) {
+            // Linearly interpolate the distance at the target angle
+            float alpha = floatIndex - lowerIndex;
+            double interpolatedDistance = (1.0 - alpha) * laserScan_.ranges[lowerIndex] + alpha * laserScan_.ranges[upperIndex];
+            return interpolatedDistance;
+        }
 
-    // Check if the indices are within the bounds of the ranges array
-    if (lowerIndex >= 0 && upperIndex < laserScan_.ranges.size()) {
-        // Linearly interpolate the distance at the target angle
-        float alpha = floatIndex - lowerIndex;
-        double interpolatedDistance = (1.0 - alpha) * laserScan_.ranges[lowerIndex] + alpha * laserScan_.ranges[upperIndex];
-        return interpolatedDistance;
+        // Return -1 if the angle is out of bounds
+        return -1; 
     }
-
-    // Return -1 if the angle is out of bounds
-    return -1; 
+    else if (method = 1){
+        int index = targetAngle*180/M_PI;
+        if(index < 0) index = index + 360;
+        // ROS_INFO("index: %d", index);
+        double dist;
+        dist = laserScan_.ranges[index];
+        ROS_INFO("distance readings: [%f,%f,%f,%f]", laserScan_.ranges[0], laserScan_.ranges[90], laserScan_.ranges[180], laserScan_.ranges[270]);
+        return dist;
+    }
+    return 0;
 };
 
 //Counts the number of segments of readings to indicate a single entity being detected, excludes the firetruck

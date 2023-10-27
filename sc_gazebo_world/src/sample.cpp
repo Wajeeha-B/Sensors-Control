@@ -120,25 +120,27 @@ void Sample::seperateThread() {
 
         int xPixel;
         xPixel = imageProcessing.TemplateMatch();
-        laserProcessing.myFunction(myInt);
+        // laserProcessing.myFunction(myInt);
 
         double angle;
         angle = imageProcessing.LocalAngle(xPixel);
+        // ROS_INFO("angle: %f", angle);
         
-        // double dist;
-        // dist = laserProcessing.FindDist(angle);
-        
-        // if(dist < STOP_DISTANCE_) tooClose_ = true;
-        // else tooClose_ = false;
+        double dist;
+        dist = laserProcessing.FindDistance(angle, 1);
+        // ROS_INFO("Distance: %f", dist);
 
-        // geometry_msgs::Point localGoal_;
-        // localGoal_.x = dist*cos(angle);
-        // localGoal_.y = dist*sin(angle);
-        // localGoal_.z = 0;
+        if(dist < STOP_DISTANCE_ || dist > 2147483647) tooClose_ = true;
+        else tooClose_ = false;
+
+        geometry_msgs::Point localGoal_;
+        localGoal_.x = dist*cos(angle);
+        localGoal_.y = dist*sin(angle);
+        localGoal_.z = 0;
         
         // ROS_INFO("Robot pose: [%f,%f,%f]", robotPose_.position.x, robotPose_.position.y, robotPose_.position.z);
-        // goal_ = local2Global(localGoal_, robotPose_);
-        // goals_.push_back(goal_);
+        goal_ = local2Global(localGoal_, robotPose_);
+        goals_.push_back(goal_);
 
         //If there are any goals stored, feed the first element into the goal_ variable
         double steering = 0;
@@ -163,9 +165,9 @@ void Sample::seperateThread() {
             drive.angular.x = 0.0;
             drive.angular.y = 0.0;
             // if (turning_ != 0) drive.angular.z = turning_*turningSens_;
-            if (angle > 0.001 || angle < -0.001) drive.angular.z = angle;
-            else drive.angular.z = 0.0;
-            // drive.angular.z = steering;
+            // if (angle > 0.001 || angle < -0.001) drive.angular.z = angle;
+            // else drive.angular.z = 0.0;
+            drive.angular.z = steering;
         }
         else{
             drive.linear.x = 0.0;
