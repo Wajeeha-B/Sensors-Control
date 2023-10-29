@@ -3,7 +3,6 @@
 
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
-// #include <geometry_msgs/Pose.h>
 #include <math.h>
 
 #include <opencv2/opencv.hpp>
@@ -16,35 +15,45 @@
 /*!
  *  \brief     Image Processing Class
  *  \details
- *  This class is used for processing laser scan data and finding different things such as the locations of cones,
- *  the location of a goal, determining if a goal is between two cones, and converting laser data into different data types
- *  for other classes to understand. This class relies on the Sample class to input the laser data collected from a laser scanner
- *  inside a simulator that detects and measures object and their proximity to the sensor. It takes 640 readings in a 180 arc at
- *  the front of the car and has limited range.
+ *  This class is used for processing image data and finding different things such as the locations of the AR tag and the angle of pixels.
+ *  This class relies on the Sample class to input the image data collected from a camera. It takes 640x480 images.
  *  @sa Sample
  *  \author    Ashton Powell
  *  \version   1.00
- *  \date      2023-05-30
+ *  \date      2023-10-29
  */
 
 class ImageProcessing
 {
 public:
   /// @brief Constructor for laser processing
-  /// @param [in] Image - laserScan to be processed
+  ///
+  /// @param [in] image - image data to be processed
+  /// @param [in] cameraInfo - camera info for for processing
   ImageProcessing(sensor_msgs::Image image, sensor_msgs::CameraInfo cameraInfo);
 
+  /// @brief Uses template matching to find the pixel location of the AR tag
+  /// 
+  /// @return the x value of the matching pixel location
   int TemplateMatch(void);
   
+  /// @brief Gets the angle relative to the camera sensor based on the horizontal pixel location
+  ///
+  /// @param [in] xPixel - the pixel of the AR tag's horizontal location
+  /// @return the angle that the pixel creates from the camera's reference [rad]
   double LocalAngle(int xPixel);
 
 private:
-    //! Stores the laser scan data
+    //! Stores the image data
     sensor_msgs::Image image_;
+    //! Stores the image width
     int width_;
+    //! Stores the image height
     int height_;
+    //! Stores the camera info
     sensor_msgs::CameraInfo cameraInfo_;
+    //! Stores the calulcated horizontal FOV of the camera
     double fovX_;
 };
 
-#endif // DETECTCABINET_H
+#endif //IMAGEPROCESSING_H
