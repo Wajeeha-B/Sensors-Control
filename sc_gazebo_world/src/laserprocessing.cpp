@@ -22,36 +22,33 @@ unsigned int LaserProcessing::countObjectReadings()
     return count;
 }
 
-unsigned int LaserProcessing::calculateTurn(double angle) {
-    // If angle is 0-180, return false outcome (object on right and in front)
-    if (angle <= 90){
-        return 2;
-    }
 
-    // If angle is 270-360 deg, return true outcome (object on left and in front)
-    if (angle > 270){
-        return 0;
-    }
-    // If object behind robot do nothing
-    else {
-        return 1;
-    }
-};
+// // Determining where an object is 
+// unsigned int LaserProcessing::calculateTurn(double angle) {
+//     // If angle is 0-180, return false outcome (object on right and in front)
+//     if (angle <= 90){
+//         return 2;
+//     }
 
-double LaserProcessing::calculateMagnitude(double angle) {
-    //Convert 0-90 to scale 0-100
-    //NewScale = (((OldValue - OldMin)*(NewMax-NewMin)/(OldMax-OldMin))+NewMin
-    unsigned int NewScale = (((angle)*(100))/(90));
-    //Invert scale for magnitude of turn
-    return 100-NewScale; 
-};
+//     // If angle is 270-360 deg, return true outcome (object on left and in front)
+//     if (angle > 270){
+//         return 0;
+//     }
+//     // If object behind robot do nothing
+//     else {
+//         return 1;
+//     }
+// };
 
-// The provided code attempts to estimate the distance at a specific angle by interpolating 
-// between the two closest angles for which data is available. If the target angle is within 0.5 degrees 
-// of one of the measured angles, the interpolation should provide a reasonable estimate of the distance 
-// at the target angle. However, if the surrounding angles are significantly further away from the target 
-// angle, the accuracy of the interpolation may degrade, especially in 
-// environments with complex or rapidly-changing geometry.
+// double LaserProcessing::calculateMagnitude(double angle) {
+//     //Convert 0-90 to scale 0-100
+//     //NewScale = (((OldValue - OldMin)*(NewMax-NewMin)/(OldMax-OldMin))+NewMin
+//     unsigned int NewScale = (((angle)*(100))/(90));
+//     //Invert scale for magnitude of turn
+//     return 100-NewScale; 
+// };
+
+// Distance estimation based on interpolation of angles
 double LaserProcessing::findDistance(double targetAngle) {
 
     // Calculate the index corresponding to the target angle
