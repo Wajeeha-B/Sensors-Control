@@ -22,30 +22,6 @@ unsigned int LaserProcessing::countObjectReadings()
     return count;
 }
 
-unsigned int LaserProcessing::calculateTurn(double angle) {
-    // If angle is 0-180, return false outcome (object on right and in front)
-    if (angle <= 90){
-        return 2;
-    }
-
-    // If angle is 270-360 deg, return true outcome (object on left and in front)
-    if (angle > 270){
-        return 0;
-    }
-    // If object behind robot do nothing
-    else {
-        return 1;
-    }
-};
-
-double LaserProcessing::calculateMagnitude(double angle) {
-    //Convert 0-90 to scale 0-100
-    //NewScale = (((OldValue - OldMin)*(NewMax-NewMin)/(OldMax-OldMin))+NewMin
-    unsigned int NewScale = (((angle)*(100))/(90));
-    //Invert scale for magnitude of turn
-    return 100-NewScale; 
-};
-
 // The provided code attempts to estimate the distance at a specific angle by interpolating 
 // between the two closest angles for which data is available. If the target angle is within 0.5 degrees 
 // of one of the measured angles, the interpolation should provide a reasonable estimate of the distance 
@@ -72,6 +48,7 @@ double LaserProcessing::FindDistance(double targetAngle){
     }
 
     // Return -1 if the angle is out of bounds
+    // return -1; 
     if (index < 0) index = index+360;
     return laserScan_.ranges[index]; 
 };
