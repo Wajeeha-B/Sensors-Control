@@ -22,7 +22,7 @@ unsigned int LaserProcessing::countObjectReadings()
     return count;
 }
 
-// This estimates the distance at a specific angle if ther is no exact match
+// This estimates the distance at a specific angle if there is no exact match
 double LaserProcessing::FindDistance(double targetAngle){
     // Calculate the index corresponding to the target angle
     int index = (targetAngle - laserScan_.angle_min) / laserScan_.angle_increment;
