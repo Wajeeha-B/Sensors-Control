@@ -22,12 +22,7 @@ unsigned int LaserProcessing::countObjectReadings()
     return count;
 }
 
-// The provided code attempts to estimate the distance at a specific angle by interpolating 
-// between the two closest angles for which data is available. If the target angle is within 0.5 degrees 
-// of one of the measured angles, the interpolation should provide a reasonable estimate of the distance 
-// at the target angle. However, if the surrounding angles are significantly further away from the target 
-// angle, the accuracy of the interpolation may degrade, especially in 
-// environments with complex or rapidly-changing geometry.
+// This estimates the distance at a specific angle if ther is no exact match
 double LaserProcessing::FindDistance(double targetAngle){
     // Calculate the index corresponding to the target angle
     int index = (targetAngle - laserScan_.angle_min) / laserScan_.angle_increment;
@@ -47,8 +42,7 @@ double LaserProcessing::FindDistance(double targetAngle){
         return interpolatedDistance;
     }
 
-    // Return -1 if the angle is out of bounds
-    // return -1; 
+    // Eror handling for out of bounds
     if (index < 0) index = index+360;
     return laserScan_.ranges[index]; 
 };
