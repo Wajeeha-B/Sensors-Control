@@ -127,74 +127,14 @@ void Sample::seperateThread() {
         //Gets the angle of the laser scanner using the x value of the image
         double angle;
         angle = imageProcessing.LocalAngle(xPixel);
-<<<<<<< HEAD
 
         ROS_INFO("AngleMin= %f\n AngleMax= %f\n AngleIncrement= %f", laserData_.angle_min, laserData_.angle_max, laserData_.angle_increment);
-        
-        //  Obstacle Avoidance Logic Starts Here
 
-        double min_distance = laserData_.range_max;  // Initialize with a large value
-        double angle_of_min_distance = 0.0;  // Initialize the angle at which the minimum distance occurs
-
-        // Find the minimum valid distance in the laser scan data- 1st obstacle
-        for (size_t i = 0; i < laserData_.ranges.size(); ++i) {
-            double angle = laserData_.angle_min + i * laserData_.angle_increment;  // Calculate the angle of the current reading
-            angle = fmod(angle + 2*M_PI, 2*M_PI) * (180.0 / M_PI);  // Normalize angle to [0, 360) degrees
-
-            if (laserData_.ranges[i] < min_distance &&
-                ((angle >= 0 && angle <= 90) || (angle >= 270 && angle <= 359)) &&
-                laserData_.ranges[i] < 0.3) {
-                min_distance = laserData_.ranges[i];
-                angle_of_min_distance = angle;  // Update the angle at which the minimum distance occurs
-            }
-        }
-
-        // Check if a valid minimum distance was found
-        if (min_distance < 0.3) {
-            tooClose_ = true;
-            geometry_msgs::Twist drive;
-            drive.linear.x = 0.0;  // Stop any forward motion
-            drive.linear.y = 0.0;
-            drive.linear.z = 0.0;
-
-            // Determine the rotation direction based on the angle of the minimum distance
-            if (angle_of_min_distance >= 0 && angle_of_min_distance <= 90) {
-                // Turn 90 degrees to the right
-                drive.angular.z = -M_PI / 2;
-            }
-            else if (angle_of_min_distance >= 270 && angle_of_min_distance <= 359) {
-                // Turn 90 degrees to the left
-                drive.angular.z = M_PI / 2;
-            }
-
-            // Publish the driving command to reorient the Turtlebot
-            if (!real_) {
-                pubDrive_.publish(drive);
-            }
-            else {
-                pubRealDrive_.publish(drive);
-            }
-            
-            // Sleep for a while to allow the Turtlebot to complete the turn (assuming it takes 0.5 second to turn)
-            std::this_thread::sleep_for(std::chrono::seconds(0.5));
-
-            // Now move forward by 1 cm
-            drive.angular.z = 0.0;  // Stop any rotational movement
-            drive.linear.x = 0.01;  // Move forward by 1 cm (assuming the speed is in meters per second and the rate is 1 Hz)
-            
-            // Publish the driving command to move the Turtlebot forward
-            if (!real_) {
-                pubDrive_.publish(drive);
-            }
-            else {
-                pubRealDrive_.publish(drive);
-            }
-        }
+        double angle_of_min_distance;
+        std::pair<double, double> rangeBearing;
+        rangeBearing = laserProcessing.MinDistAngle(STOP_DISTANCE_);
 
         // Obstacle Avoidance Logic Ends Here
-=======
-        // ROS_INFO("angle: %f", angle);        
->>>>>>> master
         
         //Gets the distance from the angle
         double dist;
@@ -202,7 +142,7 @@ void Sample::seperateThread() {
         // ROS_INFO("Distance: %f", dist);
 
         //If the distance is less than the stop distance or more than the max value of an int (an invalid reading) the robot should stop
-        if(dist < STOP_DISTANCE_ || dist > 2147483647) tooClose_ = true;
+        if(dist < STOP_DISTANCE_ || dist > 2147483647 || rangeBearing.first < STOP_DISTANCE_) tooClose_ = true;
         //Otherwise the robot is not too close
         else tooClose_ = false;
 
@@ -250,6 +190,7 @@ void Sample::seperateThread() {
             drive.linear.z = 0.0;
             drive.angular.x = 0.0;
             drive.angular.y = 0.0;
+            // Check if a valid minimum distance was found
             // if (turning_ != 0) drive.angular.z = turning_*turningSens_;
             if (angle > 0.001 || angle < -0.001) drive.angular.z = angle; //sends the angle of turn required
             else drive.angular.z = 0.0;
@@ -257,30 +198,34 @@ void Sample::seperateThread() {
         }
         //Stops the TurtleBot
         else{
-            drive.linear.x = 0.0;
-            drive.linear.y = 0.0;
-            drive.linear.z = 0.0;
-            drive.angular.x = 0.0;
-            drive.angular.y = 0.0;
-            drive.angular.z = 0.0;
-        }
-<<<<<<< HEAD
+            if (rangeBearing.first < STOP_DISTANCE_) {
+                drive.linear.x = 0.0;  // Stop any forward motion
+                drive.linear.y = 0.0;
+                drive.linear.z = 0.0;
 
-        // Only publish the command if not too close to an obstacle
-        if (!tooClose_) {
-            if(!real_) {
-                pubDrive_.publish(drive);
+                // Determine the rotation direction based on the angle of the minimum distance
+                if (rangeBearing.second >= 0 && rangeBearing.second <= 90) {
+                    // Turn 90 degrees to the right
+                    drive.angular.z = -M_PI / 2;
+                }
+                else if (rangeBearing.second >= 270 && rangeBearing.second <= 359) {
+                    // Turn 90 degrees to the left
+                    drive.angular.z = M_PI / 2;
+                }
             }
             else {
-                pubRealDrive_.publish(drive);
+                drive.linear.x = 0.0;
+                drive.linear.y = 0.0;
+                drive.linear.z = 0.0;
+                drive.angular.x = 0.0;
+                drive.angular.y = 0.0;
+                drive.angular.z = 0.0;
             }
         }
-=======
         
         //Decides which topic gets published to depending on the 'real' service
         if(!real_) pubDrive_.publish(drive);
         else pubRealDrive_.publish(drive);
->>>>>>> master
 
         //We have a rate timer, this sleep here is needed to ensure it stops and sleeps 
         //it will do it for the exact amount of time needed to run at 5Hz

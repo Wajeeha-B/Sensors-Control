@@ -48,7 +48,7 @@ public:
   /// @returns returns magnitude of the turn as a double with a range of 0-360
   double calculateMagnitude(double angle);
 
-  void myFunction(int myInt);
+  std::pair<double, double> MinDistAngle(double stopDistance);
 
   /// @brief Finds the midpoint between the two closest cones that are detected by the laser scanner
   /// @return A geometry_msgs::Point variable with the x,y,z location of the midpoint
