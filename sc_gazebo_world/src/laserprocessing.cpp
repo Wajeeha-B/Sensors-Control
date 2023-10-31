@@ -110,10 +110,23 @@ unsigned int LaserProcessing::countSegments()
     return count;
 }
 
-void LaserProcessing::myFunction(int myInt){
-    //does whatever
-    myInt++;
-    // ROS_INFO("%d", myInt);
+std::pair<double, double> LaserProcessing::MinDistAngle(double stopDistance){
+    double min_distance = laserScan_.range_max;  // Initialize with a large value
+    double angle_of_min_distance = 0.0;  // Initialize the angle at which the minimum distance occurs
+
+    // Find the minimum valid distance in the laser scan data- 1st obstacle
+    for (size_t i = 0; i < laserScan_.ranges.size(); ++i) {
+        double angle = laserScan_.angle_min + i * laserScan_.angle_increment;  // Calculate the angle of the current reading
+        angle = fmod(angle + 2*M_PI, 2*M_PI) * (180.0 / M_PI);  // Normalize angle to [0, 360) degrees
+
+        if (laserScan_.ranges[i] < min_distance &&
+            ((angle >= 0 && angle <= 90) || (angle >= 270 && angle <= 359)) &&
+            laserScan_.ranges[i] < stopDistance) {
+            min_distance = laserScan_.ranges[i];
+            angle_of_min_distance = angle;  // Update the angle at which the minimum distance occurs
+        }
+    }
+    return std::make_pair(min_distance,angle_of_min_distance);
 }
 
 //finds the midpoint between two of the closest cones detected, one from the left and one from the right
